@@ -31,9 +31,9 @@ handler.get(async (req, res) => {
       case 'CRAZY_TIME':
         return res.json(await getTimeSeriesByProp('Crazy Time', req.db));
       case 'MONOPOLY':
-        return res.json(await getTimeSeriesByProp('Lightning Roulette', req.db));
-      case 'LIGHTNING_ROULETTE':
         return res.json(await getTimeSeriesByProp('MONOPOLY Live', req.db));
+      case 'LIGHTNING_ROULETTE':
+        return res.json(await getTimeSeriesByProp('Lightning Roulette', req.db));
       case 'MEGA_BALL':
         return res.json(await getTimeSeriesByProp('Mega Ball', req.db));
       case 'DREAM_CATCHER':
