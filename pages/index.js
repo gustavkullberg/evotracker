@@ -43,8 +43,8 @@ export default function Home() {
 
       <div className={styles.card}>
         <div className={styles.gameTiles}>
-          {gameShows.map(gs => (
-            <div>
+          {gameShows.map((gs, idx) => (
+            <div key={idx}>
               {gs === selectedGameShow ? (
                 <h4 onClick={() => setShowClick(gs)}>{gameShowTitles[gs]}</h4>
               ) : (
@@ -85,10 +85,7 @@ export default function Home() {
                   <stop offset="99%" stopColor="150d0a" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <Tooltip
-                position={{ x: 'auto', y: 'auto' }}
-                labelFormatter={time => `${moment(time).format('HH:mm, Do MMM')}`}
-              />
+              <Tooltip labelFormatter={time => `${moment(time).format('HH:mm, Do MMM')}`} />
               <Area type="monotone" dataKey="players" stroke="black" fill="url(#evoblack)" />
             </AreaChart>
           </ResponsiveContainer>
