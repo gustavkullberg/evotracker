@@ -64,13 +64,13 @@ export default function Home() {
         </div>
 
         {timeSeries.length > 0 ? (
-          <ResponsiveContainer width="95%" height={isMobile ? 300 : 700}>
+          <ResponsiveContainer width="96%" height={isMobile ? 400 : 700}>
             <AreaChart data={timeSeries} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
               <XAxis
                 dataKey="timeStamp"
                 domain={['auto', 'auto']}
                 name="Time"
-                tickFormatter={unixTime => moment(unixTime).format('HH:mm, Do MMM')}
+                tickFormatter={unixTime => moment(unixTime).format('Do MMM')}
                 type="number"
                 scale="time"
               />
