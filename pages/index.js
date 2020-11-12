@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import styles from '../styles/Home.module.css';
 import { Header } from '../components/Header';
-import { XAxis, YAxis, Tooltip, AreaChart, Area, Text, ResponsiveContainer, CartesianGrid } from 'recharts';
+import { XAxis, YAxis, Tooltip, AreaChart, Area, Text, ResponsiveContainer, CartesianGrid, Legend } from 'recharts';
 import moment from 'moment';
 import { isMobile } from 'react-device-detect';
 
-const gameShows = ['CRAZY_TIME', 'MONOPOLY', 'LIGHTNING_ROULETTE', 'MEGA_BALL', 'DREAM_CATCHER'];
+const gameShows = ['ALL_SHOWS', 'CRAZY_TIME', 'MONOPOLY', 'LIGHTNING_ROULETTE', 'MEGA_BALL', 'DREAM_CATCHER'];
 
 const gameShowTitles = {
+  ALL_SHOWS: 'All Shows',
   CRAZY_TIME: 'Crazy Time',
   MONOPOLY: 'Monopoly',
   LIGHTNING_ROULETTE: 'Lightning Roulette',
@@ -16,7 +17,7 @@ const gameShowTitles = {
 };
 
 export default function Home() {
-  const [selectedGameShow, setGameShow] = useState('CRAZY_TIME');
+  const [selectedGameShow, setGameShow] = useState('ALL_SHOWS');
   const [, setFilter] = useState('1D');
 
   const [timeSeries, setTimeSeries] = useState([]);
@@ -24,7 +25,11 @@ export default function Home() {
   useEffect(() => {
     fetch(`api/gameShowHistory?gameShow=${selectedGameShow}`)
       .then(response => response.json())
-      .then(json => json.map(j => ({ timeStamp: new Date(j.timeStamp).getTime(), players: j.value })))
+      .then(json => {
+        return selectedGameShow === 'ALL_SHOWS'
+          ? json.map(j => ({ timeStamp: new Date(j.timeStamp).getTime(), ...j.value }))
+          : json.map(j => ({ timeStamp: new Date(j.timeStamp).getTime(), players: j.value }));
+      })
       .then(data => setTimeSeries(data));
   }, []);
 
@@ -33,7 +38,11 @@ export default function Home() {
 
     fetch(`api/gameShowHistory?gameShow=${gs}`)
       .then(response => response.json())
-      .then(json => json.map(j => ({ timeStamp: new Date(j.timeStamp).getTime(), players: j.value })))
+      .then(json => {
+        return gs === 'ALL_SHOWS'
+          ? json.map(j => ({ timeStamp: new Date(j.timeStamp).getTime(), ...j.value }))
+          : json.map(j => ({ timeStamp: new Date(j.timeStamp).getTime(), players: j.value }));
+      })
       .then(data => setTimeSeries(data));
   };
 
@@ -68,11 +77,6 @@ export default function Home() {
               <CartesianGrid stroke="#2c3e50" vertical={false} strokeDasharray="6 6" />
               <YAxis
                 type="number"
-                label={
-                  <Text x={0} y={0} dx={25} dy={350} offset={0} angle={-90}>
-                    Players
-                  </Text>
-                }
                 orientation="left"
                 domain={[0, 'auto']}
                 tickFormatter={tick => {
@@ -86,7 +90,38 @@ export default function Home() {
                 </linearGradient>
               </defs>
               <Tooltip labelFormatter={time => `${moment(time).format('HH:mm, Do MMM')}`} />
-              <Area type="monotone" dataKey="players" stroke="black" fill="url(#evoblack)" />
+              {selectedGameShow === 'ALL_SHOWS' && <Legend iconType="square" height={36} />}
+
+              <Area type="monotone" dataKey="Crazy Time" stackId="1" stroke="brown" fill="brown" name="Crazy Time" />
+              <Area
+                type="monotone"
+                dataKey="Lightning Roulette"
+                stackId="1"
+                stroke="#cc9900"
+                fill="#cc9900"
+                name="Roulette"
+              />
+              <Area
+                type="monotone"
+                dataKey="MONOPOLY Live"
+                stackId="1"
+                stroke="#18bc9c"
+                fill="#18bc9c"
+                name="Monopoly"
+              />
+              <Area type="monotone" dataKey="Mega Ball" stackId="1" stroke="#3498db" fill="#3498db" name="Mega Ball" />
+              <Area
+                type="monotone"
+                dataKey="Dream Catcher"
+                stackId="1"
+                stroke="black"
+                fill="150d0a"
+                name="Dream Catcher"
+              />
+
+              {selectedGameShow !== 'ALL_SHOWS' && (
+                <Area type="monotone" dataKey="players" stroke="black" fill="url(#evoblack)" />
+              )}
             </AreaChart>
           </ResponsiveContainer>
         ) : undefined}
