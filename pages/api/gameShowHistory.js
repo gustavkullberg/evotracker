@@ -6,9 +6,23 @@ const collectionName = 'evostats';
 const handler = nextConnect();
 handler.use(middleware);
 
+const timeSeriesCache = {
+  expiryTimestamp: null,
+  value: null,
+};
+
 const getTimeSeriesByProp = async (prop, db) => {
+  if (timeSeriesCache.expiryTimestamp && timeSeriesCache.expiryTimestamp > Date.now()) {
+    return timeSeriesCache.value;
+  }
+
   const arr = await db.collection(collectionName).find().toArray();
-  return arr.map(a => ({ timeStamp: a.timeStamp, value: a.entry[prop] }));
+  const now = new Date();
+  const expiryTimestamp = new Date(now.getTime() + 1000 * 60 * 5);
+  timeSeriesCache.expiryTimestamp = expiryTimestamp;
+
+  timeSeriesCache.value = arr.map(a => ({ timeStamp: a.timeStamp, value: a.entry[prop] }));
+  return timeSeriesCache.value;
 };
 
 handler.get(async (req, res) => {
