@@ -13,7 +13,7 @@ const timeSeriesCache = {
 
 const getTimeSeriesByProp = async (prop, db) => {
   if (timeSeriesCache.expiryTimestamp && timeSeriesCache.expiryTimestamp > Date.now()) {
-    return timeSeriesCache.value;
+    return timeSeriesCache.value.map(a => ({ timeStamp: a.timeStamp, value: a.entry[prop] }));
   }
 
   const arr = await db.collection(collectionName).find().toArray();
@@ -21,8 +21,8 @@ const getTimeSeriesByProp = async (prop, db) => {
   const expiryTimestamp = new Date(now.getTime() + 1000 * 60 * 5);
   timeSeriesCache.expiryTimestamp = expiryTimestamp;
 
-  timeSeriesCache.value = arr.map(a => ({ timeStamp: a.timeStamp, value: a.entry[prop] }));
-  return timeSeriesCache.value;
+  timeSeriesCache.value = arr;
+  return timeSeriesCache.value.map(a => ({ timeStamp: a.timeStamp, value: a.entry[prop] }));
 };
 
 handler.get(async (req, res) => {
