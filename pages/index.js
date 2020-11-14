@@ -36,6 +36,7 @@ const gameShowTitles = {
 
 export default function Home() {
   const [selectedGameShow, setGameShow] = useState('ALL_SHOWS');
+  const [gameStats, setGameStats] = useState({});
   const [selectedFilter, setFilter] = useState('7D');
 
   const [timeSeries, setTimeSeries] = useState([]);
@@ -51,13 +52,21 @@ export default function Home() {
       .then(data => setTimeSeries(data));
   };
 
+  const fetchGameStats = gameShow => {
+    fetch(`/api/gameShowStats?gameShow=${gameShow}`)
+      .then(response => response.json())
+      .then(data => setGameStats(data));
+  };
+
   useEffect(() => {
     fetchTimeSeries(selectedGameShow, selectedFilter);
+    fetchGameStats(selectedGameShow);
   }, []);
 
   const setShowClick = gs => {
     setGameShow(gs);
     fetchTimeSeries(gs, selectedFilter);
+    fetchGameStats(gs);
   };
 
   const setFilterClick = f => {
@@ -70,14 +79,34 @@ export default function Home() {
       <Header />
 
       <div className={styles.card}>
+        <div className={styles.statusContiner}>
+          <div className={styles.statusCard}>
+            <h1>{gameShowTitles[selectedGameShow]}</h1>
+            <div className={styles.statusProp}>
+              <p>Live Players</p>
+              <h4>{gameStats.livePlayers}</h4>
+            </div>
+
+            <div className={styles.statusProp}>
+              <p>Avg. Players, 7 Days</p>
+              <h4>{gameStats.weekAvg}</h4>
+            </div>
+
+            <p>{gameStats.timeStamp && new Date(gameStats.timeStamp).toLocaleString()}</p>
+          </div>
+        </div>
         <div className={styles.gameTiles}>
           {gameShows.map((gs, idx) => (
             <div key={idx}>
-              {gs === selectedGameShow ? (
-                <h4 onClick={() => setShowClick(gs)}>{gameShowTitles[gs]}</h4>
-              ) : (
-                <h5 onClick={() => setShowClick(gs)}>{gameShowTitles[gs]}</h5>
-              )}
+              <h5
+                style={{
+                  backgroundColor: selectedGameShow === gs ? '#1b2631' : 'white',
+                  color: selectedGameShow === gs ? 'white' : '#1b2631',
+                }}
+                onClick={() => setShowClick(gs)}
+              >
+                {gameShowTitles[gs]}
+              </h5>
             </div>
           ))}
         </div>
@@ -108,8 +137,8 @@ export default function Home() {
               />
               <defs>
                 <linearGradient id="evoblack" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="25%" stopColor="150d0a" stopOpacity={0.8} />
-                  <stop offset="99%" stopColor="150d0a" stopOpacity={0} />
+                  <stop offset="25%" stopColor="#1b2631" stopOpacity={0.8} />
+                  <stop offset="99%" stopColor="#1b2631" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <Tooltip labelFormatter={time => `${moment(time).format('HH:mm, Do MMM')}`} />
@@ -204,16 +233,22 @@ export default function Home() {
           </ResponsiveContainer>
         ) : undefined}
 
-        <div className={styles.filterTiles}>
-          {filters.map((f, idx) => (
-            <div key={idx}>
-              {f === selectedFilter ? (
-                <h4 onClick={() => setFilterClick(f)}>{f}</h4>
-              ) : (
-                <h5 onClick={() => setFilterClick(f)}>{f}</h5>
-              )}
-            </div>
-          ))}
+        <div className={styles.filterTilesContainer}>
+          <div className={styles.filterTiles}>
+            {filters.map((f, idx) => (
+              <div key={idx}>
+                <h4
+                  style={{
+                    backgroundColor: selectedFilter === f ? '#1b2631' : 'white',
+                    color: selectedFilter === f ? 'white' : '#1b2631',
+                  }}
+                  onClick={() => setFilterClick(f)}
+                >
+                  {f}
+                </h4>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 

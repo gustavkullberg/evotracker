@@ -31,7 +31,7 @@ const isSevenDaysAgo = date => {
   return new Date(date) > dayAgo;
 };
 
-const filterByTime = (a, timeFilter) => {
+export const filterByTime = (a, timeFilter) => {
   if (timeFilter === '1D') {
     return isOneDayAgo(a.timeStamp);
   } else if (timeFilter === '7D') {
@@ -61,7 +61,7 @@ const sampleByTime = (arr, timeFilter) => {
   });
   return newarr;
 };
-const timeSeriesCache = {
+export const timeSeriesCache = {
   expiryTimestamp: null,
   value: null,
 };

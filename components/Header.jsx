@@ -21,7 +21,11 @@ export const Header = () => {
 
     }, [])
     return (
-        <div style={{ width: "100%", position: "fixed", top: 0, display: `${headerIsVisible ? "" : "none"}` }}>
+        <div style={{
+            boxShadow: "rgba(0, 0, 0, 0.5) 7px 7px 10px 0px",
+            width: "100%", position: "fixed", top: 0, backgroundColor: "#1b2631",
+            color: "white", display: `${headerIsVisible ? "" : "none"}`
+        }}>
             <header>
                 <h1>
                     <a href="/">Evotracker</a>
@@ -32,7 +36,6 @@ export const Header = () => {
             header {
               width: 100%;
               height: 100px;
-              border-bottom: 1px solid #eaeaea;
               display: flex;
               justify-content: center;
               align-items: center;
