@@ -2,13 +2,11 @@ import '../styles/globals.css';
 import TagManager from 'react-gtm-module';
 import { useEffect } from 'react';
 
-const tagManagerArgs = {
-  gtmId: 'GTM-KJ4L2LM',
-};
-
 function MyApp({ Component, pageProps }) {
   useEffect(() => {
-    TagManager.initialize(tagManagerArgs);
+    TagManager.initialize({
+      gtmId: 'GTM-KJ4L2LM',
+    });
   }, []);
 
   return <Component {...pageProps} />;

@@ -81,11 +81,6 @@
   margin-top: 3rem;
 }
 
-.line {
-  border-top: 1px solid black;
-  margin-bottom: 20px;
-}
-
 .card {
   margin-top: 130px;
   margin-bottom: 50px;
@@ -116,29 +111,48 @@
 
 .gameTiles {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-around;
-  margin-bottom: 40px;
+  margin-bottom: 30px;
   padding-left: 1.5rem;
   padding-right: 1.5rem;
+}
+.filterTiles {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  padding-top: 1.5rem;
 }
 
 .gameTiles h5 {
   font-size: 1rem;
   cursor: pointer;
   padding: 5px;
+  margin: 2px;
 }
 
 .gameTiles h4 {
   padding: 5px;
-  font-size: 1.2rem;
+  font-size: 1rem;
   cursor: pointer;
+  margin: 2px;
   border-bottom: 3px solid black;
 }
 
-.gameTiles .line {
-  width: 100%;
-  border-bottom: 4px solid black;
+.filterTiles h5 {
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.filterTiles h4 {
+  padding: 5px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  border-bottom: 3px solid black;
 }
 
 @media (max-width: 600px) {
