@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 function MyApp({ Component, pageProps }) {
   useEffect(() => {
     TagManager.initialize({
-      gtmId: process.env.GTM_ID,
+      gtmId: 'GTM-KJ4L2LM',
     });
   }, []);
 
