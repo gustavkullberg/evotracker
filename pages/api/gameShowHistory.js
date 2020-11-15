@@ -1,34 +1,25 @@
 import nextConnect from 'next-connect';
 import middleware from '../../middleware/db';
+import { groupBy } from '../../utils/groupBy';
+import { isOneDayAgo } from '../../utils/isOneDayAgo';
+import { isSevenDaysAgo } from '../../utils/isSevenDaysAgo';
 
-const groupBy = (list, keyGetter) => {
-  const map = new Map();
-  list.forEach(item => {
-    const key = keyGetter(item);
-    const collection = map.get(key);
-    if (!collection) {
-      map.set(key, [item]);
-    } else {
-      collection.push(item);
-    }
-  });
-  return map;
-};
 const collectionName = 'evostats';
 
 const handler = nextConnect();
 handler.use(middleware);
 
-const isOneDayAgo = date => {
-  const day = 1000 * 60 * 60 * 24;
-  const dayAgo = Date.now() - day;
-  return new Date(date) > dayAgo;
-};
-
-const isSevenDaysAgo = date => {
-  const day = 1000 * 60 * 60 * 24 * 7;
-  const dayAgo = Date.now() - day;
-  return new Date(date) > dayAgo;
+const mapToMovingAverage = (arr, maIdx) => {
+  const res1 = arr.map((a, idx) => {
+    const minIndex = idx - maIdx >= 0 ? idx - maIdx : 0;
+    const slicedArr = arr.slice(minIndex, idx);
+    return {
+      timeStamp: a.timeStamp,
+      value: a.value,
+      maValue: Math.round(slicedArr.reduce((total, obj) => total + obj.value, 0) / (idx - minIndex)),
+    };
+  });
+  return res1;
 };
 
 export const filterByTime = (a, timeFilter) => {
