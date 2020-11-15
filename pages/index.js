@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import styles from '../styles/Home.module.css';
 import { Header } from '../components/Header';
+import { Footer } from '../components/Footer';
+
 import { XAxis, YAxis, Tooltip, AreaChart, Area, Text, ResponsiveContainer, CartesianGrid, Legend } from 'recharts';
 import moment from 'moment';
 import { isMobile } from 'react-device-detect';
@@ -252,12 +254,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div className={styles.footer}>
-        <a href="https://livecasino.williamhill.com/en-gb/game-shows" target="_blank" rel="noopener noreferrer">
-          <h5>Data source: William Hill</h5>
-        </a>
-        <h5>By Gustav Kullberg</h5>
-      </div>
+      <Footer />
     </div>
   );
 }
