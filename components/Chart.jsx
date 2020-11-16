@@ -1,10 +1,11 @@
 import { isMobile } from 'react-device-detect';
 import { XAxis, YAxis, Tooltip, AreaChart, Area, Text, ResponsiveContainer, CartesianGrid, Legend } from 'recharts';
 import moment from 'moment';
+import '../styles/Home.module.css';
 
 export const Chart = ({ timeSeries, selectedGameShow, selectedFilter }) => {
     return ((timeSeries.length > 0 ? (
-        <ResponsiveContainer width="96%" height={isMobile ? 400 : 700}>
+        <ResponsiveContainer width="96%" height={isMobile ? 400 : 450}>
             <AreaChart data={timeSeries} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
                 <XAxis
                     dataKey="timeStamp"
@@ -123,5 +124,7 @@ export const Chart = ({ timeSeries, selectedGameShow, selectedFilter }) => {
                 )}
             </AreaChart>
         </ResponsiveContainer>
-    ) : <div></div>))
+    ) : <div style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: "100px" }}>
+            <p>Loading ..</p>
+        </div>))
 }
