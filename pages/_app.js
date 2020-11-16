@@ -1,6 +1,7 @@
-import '../styles/globals.css';
+import styles from '../styles/Home.module.css';
 import TagManager from 'react-gtm-module';
 import { useEffect } from 'react';
+import { Header, Footer } from '../components';
 
 function MyApp({ Component, pageProps }) {
   useEffect(() => {
@@ -13,8 +14,13 @@ function MyApp({ Component, pageProps }) {
     <div>
       <head>
         <title>Evotracker</title>
+        <script src="https://unpkg.com/ionicons@5.0.0/dist/ionicons.js"></script>
       </head>
-      <Component {...pageProps} />
+      <div className={styles.container}>
+        <Header />
+        <Component {...pageProps} />
+        <Footer />
+      </div>
     </div>
   );
 }

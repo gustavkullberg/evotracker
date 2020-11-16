@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Lexend+Deca&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Aldrich&display=swap');
+
 .container {
   min-height: 100vh;
   padding: 0 0.5rem;
@@ -8,6 +9,9 @@
   justify-content: center;
   align-items: center;
   font-family: 'Aldrich', sans-serif;
+}
+.recharts-legend-item {
+  font-size: 0.15rem;
 }
 
 .footer {
@@ -18,6 +22,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding-bottom: 25px;
 }
 
 .footer a {
@@ -65,12 +70,13 @@
 
 .gameTiles {
   display: flex;
+  flex-direction: column;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-around;
+  justify-content: flex-start;
   margin-bottom: 30px;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
+  /* width: 85%; */
+  margin-right: 25px;
 }
 .filterTiles {
   display: flex;
@@ -92,6 +98,57 @@
   color: white;
 }
 
+.gameTiles p {
+  font-size: 1rem;
+  cursor: pointer;
+
+  padding: 10px;
+  width: 100%;
+  background-color: #1b2631;
+  box-shadow: rgba(0, 0, 0, 0.5) 7px 7px 10px 0px;
+  color: white;
+  /* width: 100%; */
+}
+
+.gameButtonContainer {
+  display: flex;
+  width: 95%;
+  flex-direction: row;
+  margin-bottom: 1rem;
+}
+
+.buttonDropdown {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  z-index: 50;
+}
+
+.gameButton {
+  cursor: pointer;
+  padding: 0.875rem;
+  background-color: #1b2631;
+  color: white;
+  outline: none;
+  appearance: none;
+  border: none;
+  font-size: 1rem;
+  font-family: 'Aldrich', sans-serif;
+  text-align: left;
+  margin-right: 1.25rem;
+}
+
+.gameButton:hover {
+  background-color: #3d4852;
+}
+
+.selectionContainer {
+  display: flex;
+  width: 100%;
+  align-items: baseline;
+  justify-content: center;
+}
+
 .gameTiles h4 {
   padding: 5px;
   font-size: 1rem;
@@ -110,7 +167,6 @@
   color: white;
   padding: 10px;
   margin: 10px 10px 10px 10px;
-
   font-size: 1.2rem;
   cursor: pointer;
 }
@@ -130,6 +186,11 @@
   margin-bottom: 20px;
   padding-bottom: 20px;
   box-shadow: rgba(0, 0, 0, 0.5) 7px 7px 10px 0px;
+}
+.selectionButtonsContainer {
+  position: absolute;
+
+  z-index: 50;
 }
 
 .statusCard h1 {
@@ -160,10 +221,11 @@
   .card {
     width: 97%;
     margin-top: 110px;
+    padding-bottom: 100px;
   }
 
   .gameTiles {
-    justify-content: center;
+    width: 100%;
   }
 
   .gameTiles h5 {

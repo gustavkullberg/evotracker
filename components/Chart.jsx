@@ -35,10 +35,12 @@ export const Chart = ({ timeSeries, selectedGameShow, selectedFilter }) => {
                     </linearGradient>
                 </defs>
                 <Tooltip labelFormatter={time => `${moment(time).format('HH:mm, Do MMM')}`} />
-                {selectedGameShow === 'ALL_SHOWS' && <Legend iconType="square" height={36} />}
+                {selectedGameShow === 'ALL_SHOWS' && (
+                    <Legend iconType="square" height={36} />
+                )}
                 {selectedGameShow === 'ALL_SHOWS' && (
                     <Area type="monotone" dataKey="Crazy Time" stackId="1" stroke="brown" fill="brown" name="Crazy Time" />
-                )}{' '}
+                )}
                 {selectedGameShow === 'ALL_SHOWS' && (
                     <Area
                         type="monotone"
@@ -123,7 +125,7 @@ export const Chart = ({ timeSeries, selectedGameShow, selectedFilter }) => {
                     <Area type="monotone" dataKey="players" stroke="black" fill="url(#evoblack)" />
                 )}
             </AreaChart>
-        </ResponsiveContainer>
+        </ResponsiveContainer >
     ) : <div style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: "100px" }}>
             <p>Loading ..</p>
         </div>))
