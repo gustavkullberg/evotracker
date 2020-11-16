@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styles from '../styles/Home.module.css';
-import { Header, Footer, StatusCard, TimeFilters, GameShowSelection, Chart } from '../components';
+import { StatusCard, Chart, Dropdown } from '../components';
 import { gameShowTitles, gameShows } from '../constants';
 
 const filters = ['1D', '7D'];
@@ -35,12 +35,13 @@ export default function Home() {
     fetchGameStats(selectedGameShow);
   }, []);
 
-  const setShowClick = gs => {
-    setGameShow(gs);
+  const setShowClick = gameShowTitle => {
+    const gameShowKey = Object.keys(gameShowTitles).find(k => gameShowTitles[k] === gameShowTitle);
+    setGameShow(gameShowKey);
     setGameSelectionIsOpen(false);
 
-    fetchTimeSeries(gs, selectedFilter);
-    fetchGameStats(gs);
+    fetchTimeSeries(gameShowKey, selectedFilter);
+    fetchGameStats(gameShowKey);
   };
 
   const setFilterClick = f => {
@@ -54,53 +55,20 @@ export default function Home() {
       <StatusCard selectedGameShow={selectedGameShow} gameStats={gameStats} />
       <div className={styles.selectionContainer}>
         <div className={styles.gameButtonContainer}>
-          <div>
-            <button
-              className={styles.gameButton}
-              style={{ marginBottom: '3px', boxShadow: 'rgba(0, 0, 0, 0.5) 7px 7px 10px 0px' }}
-              onClick={() => setFilterSelectionIsOpen(!filterSelectionIsOpen)}
-            >
-              {selectedFilter}
-              <span style={{ marginLeft: '0.5rem' }}>
-                <ion-icon name={filterSelectionIsOpen ? 'chevron-up-outline' : 'chevron-down-outline'} />
-              </span>
-            </button>
-
-            <div className={styles.buttonDropdown}>
-              {filterSelectionIsOpen &&
-                filters.map(f =>
-                  f !== selectedFilter ? (
-                    <button className={styles.gameButton} onClick={() => setFilterClick(f)}>
-                      {f}
-                    </button>
-                  ) : undefined
-                )}
-            </div>
-          </div>
-
-          <div>
-            <button
-              className={styles.gameButton}
-              style={{ marginBottom: '3px', boxShadow: 'rgba(0, 0, 0, 0.5) 7px 7px 10px 0px' }}
-              onClick={() => setGameSelectionIsOpen(!gameSelectionIsOpen)}
-            >
-              {gameShowTitles[selectedGameShow]}
-              <span style={{ marginLeft: '0.5rem' }}>
-                <ion-icon name={gameSelectionIsOpen ? 'chevron-up-outline' : 'chevron-down-outline'} />
-              </span>
-            </button>
-
-            <div className={styles.buttonDropdown}>
-              {gameSelectionIsOpen &&
-                gameShows.map(gs =>
-                  gs !== selectedGameShow ? (
-                    <button className={styles.gameButton} onClick={() => setShowClick(gs)}>
-                      {gameShowTitles[gs]}
-                    </button>
-                  ) : undefined
-                )}
-            </div>
-          </div>
+          <Dropdown
+            label={selectedFilter}
+            options={filters}
+            isOpen={filterSelectionIsOpen}
+            setClick={setFilterClick}
+            setIsOpen={setFilterSelectionIsOpen}
+          ></Dropdown>
+          <Dropdown
+            label={gameShowTitles[selectedGameShow]}
+            options={gameShows.map(gs => gameShowTitles[gs])}
+            isOpen={gameSelectionIsOpen}
+            setClick={setShowClick}
+            setIsOpen={setGameSelectionIsOpen}
+          ></Dropdown>
         </div>
       </div>
       <Chart timeSeries={timeSeries} selectedGameShow={selectedGameShow} selectedFilter={selectedFilter} />
