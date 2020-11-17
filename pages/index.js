@@ -3,7 +3,7 @@ import styles from '../styles/Home.module.css';
 import { StatusCard, Chart, Dropdown } from '../components';
 import { gameShowTitles, gameShows } from '../constants';
 
-const filters = ['1D', '7D'];
+const filters = ['1D', '7D', 'Daily Avg'];
 
 export default function Home() {
   const [selectedGameShow, setGameShow] = useState('ALL_SHOWS');

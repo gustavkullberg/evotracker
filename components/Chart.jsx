@@ -11,10 +11,12 @@ export const Chart = ({ timeSeries, selectedGameShow, selectedFilter }) => {
                     dataKey="timeStamp"
                     domain={['auto', 'auto']}
                     name="Time"
+                    minTickGap={isMobile ? 16 : 100}
                     tickFormatter={unixTime => {
                         if (selectedFilter === '1D') return moment(unixTime).format('HH:mm');
-                        else if (selectedFilter === '7D') return moment(unixTime).format('Do MMM');
-                        else if (selectedFilter === 'Daily') return moment(unixTime).format("MMM'YY");
+                        else if (selectedFilter === '7D') return moment(unixTime).format(isMobile ? 'ddd' : 'ddd Do');
+                        else if (selectedFilter === 'Daily Max') return moment(unixTime).format("MMM Do");
+                        else if (selectedFilter === 'Daily Avg') return moment(unixTime).format("MMM Do");
                     }}
                     type="number"
                     scale="time"
@@ -34,12 +36,12 @@ export const Chart = ({ timeSeries, selectedGameShow, selectedFilter }) => {
                         <stop offset="99%" stopColor="#1b2631" stopOpacity={0} />
                     </linearGradient>
                 </defs>
-                <Tooltip labelFormatter={time => `${moment(time).format('HH:mm, Do MMM')}`} />
+                <Tooltip labelFormatter={time => `${moment(time).format(selectedFilter.includes("Daily") ? 'Do MMM' : 'HH:mm, Do MMM')}`} />
                 {selectedGameShow === 'ALL_SHOWS' && (
                     <Legend iconType="square" height={36} />
                 )}
                 {selectedGameShow === 'ALL_SHOWS' && (
-                    <Area type="monotone" dataKey="Crazy Time" stackId="1" stroke="brown" fill="brown" name="Crazy Time" />
+                    <Area type="monotone" dataKey="Crazy Time" stackId="1" stroke="brown" fill="brown" name="Crazy Time" isAnimationActive={false} />
                 )}
                 {selectedGameShow === 'ALL_SHOWS' && (
                     <Area
@@ -49,6 +51,7 @@ export const Chart = ({ timeSeries, selectedGameShow, selectedFilter }) => {
                         stroke="#cc9900"
                         fill="#cc9900"
                         name="Roulette"
+                        isAnimationActive={false}
                     />
                 )}
                 {selectedGameShow === 'ALL_SHOWS' && (
@@ -59,6 +62,7 @@ export const Chart = ({ timeSeries, selectedGameShow, selectedFilter }) => {
                         stroke="#18bc9c"
                         fill="#18bc9c"
                         name="Monopoly"
+                        isAnimationActive={false}
                     />
                 )}
                 {selectedGameShow === 'ALL_SHOWS' && (
@@ -69,6 +73,7 @@ export const Chart = ({ timeSeries, selectedGameShow, selectedFilter }) => {
                         stroke="#a991d4"
                         fill="#a991d4"
                         name="Mega Ball"
+                        isAnimationActive={false}
                     />
                 )}
                 {selectedGameShow === 'ALL_SHOWS' && (
@@ -79,6 +84,7 @@ export const Chart = ({ timeSeries, selectedGameShow, selectedFilter }) => {
                         stroke="#3498db"
                         fill="#3498db"
                         name="Dream Catcher"
+                        isAnimationActive={false}
                     />
                 )}
                 {selectedGameShow === 'ALL_SHOWS' && (
@@ -89,6 +95,7 @@ export const Chart = ({ timeSeries, selectedGameShow, selectedFilter }) => {
                         stroke="#000000"
                         fill="#000000"
                         name="Speed Baccarat A"
+                        isAnimationActive={false}
                     />
                 )}
                 {selectedGameShow === 'ALL_SHOWS' && (
@@ -99,6 +106,7 @@ export const Chart = ({ timeSeries, selectedGameShow, selectedFilter }) => {
                         stroke="#1a1a1a"
                         fill="#1a1a1a"
                         name="Speed Baccarat B"
+                        isAnimationActive={false}
                     />
                 )}
                 {selectedGameShow === 'ALL_SHOWS' && (
@@ -109,6 +117,7 @@ export const Chart = ({ timeSeries, selectedGameShow, selectedFilter }) => {
                         stroke="#333333"
                         fill="#333333"
                         name="Lightning Baccarat"
+                        isAnimationActive={false}
                     />
                 )}
                 {selectedGameShow === 'ALL_SHOWS' && (
@@ -119,11 +128,13 @@ export const Chart = ({ timeSeries, selectedGameShow, selectedFilter }) => {
                         stroke="#4d4d4d"
                         fill="#4d4d4d"
                         name="Super Sic Bo"
+                        isAnimationActive={false}
                     />
                 )}
-                {selectedGameShow !== 'ALL_SHOWS' && (
+                {(selectedGameShow !== 'ALL_SHOWS') &&
+
                     <Area type="monotone" dataKey="players" stroke="black" fill="url(#evoblack)" />
-                )}
+                }
             </AreaChart>
         </ResponsiveContainer >
     ) : <div style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: "100px" }}>

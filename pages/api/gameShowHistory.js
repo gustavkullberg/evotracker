@@ -32,26 +32,80 @@ export const filterByTime = (a, timeFilter) => {
   }
 };
 
-const sampleByTime = (arr, timeFilter) => {
-  if (timeFilter !== 'Daily') {
-    return arr;
-  }
-  const groups = groupBy(arr, x => new Date(x.timeStamp).toISOString().split('T')[0]);
-  let newarr = [];
+const sampleByTime = (arr, timeFilter, isAggregatedView = false) => {
+  if (isAggregatedView && timeFilter === 'Daily Max') {
+    const summedArr = arr.map(a => ({
+      timeStamp: a.timeStamp,
+      value: Object.values(a.value).reduce((tot, obj) => tot + obj, 0),
+    }));
+    const groups = groupBy(summedArr, x => new Date(x.timeStamp).toISOString().split('T')[0]);
 
-  groups.forEach((g, idx) => {
-    newarr.push({
-      timeStamp: idx,
-      value: Math.max.apply(
-        Math,
-        g.map(function (o) {
-          return o.value;
-        })
-      ),
+    const res = [];
+    groups.forEach(g => {
+      const hej = g.reduce(
+        (total, obj) => {
+          if (obj.value > total.value) {
+            return obj;
+          }
+          return total;
+        },
+        { value: 0 }
+      );
+      res.push(hej);
     });
-  });
-  return newarr;
+    const timeStampsToCheck = res.map(r => r.timeStamp);
+    return arr.filter(a => timeStampsToCheck.includes(a.timeStamp));
+  }
+  if (isAggregatedView && timeFilter === 'Daily Avg') {
+    const groups = groupBy(arr, x => new Date(x.timeStamp).toISOString().split('T')[0]);
+    const resArr = [];
+    groups.forEach((g, idx) => {
+      const value = g.reduce((tot, obj) => {
+        Object.keys(obj.value).forEach(key => {
+          tot[key] = obj.value[key] / g.length + (tot[key] ?? 0);
+        });
+        return tot;
+      }, {});
+      const roundedValues = Object.keys(value).reduce((tot, key) => {
+        tot[key] = Math.round(value[key]);
+        return tot;
+      }, {});
+      resArr.push({ timeStamp: idx, value: roundedValues });
+    });
+    return resArr;
+  }
+
+  if (timeFilter === 'Daily Max') {
+    const groups = groupBy(arr, x => new Date(x.timeStamp).toISOString().split('T')[0]);
+    let newarr = [];
+    groups.forEach((g, idx) => {
+      newarr.push({
+        timeStamp: idx,
+        value: Math.max.apply(
+          Math,
+          g.map(function (o) {
+            return o.value;
+          })
+        ),
+      });
+    });
+    return newarr;
+  }
+
+  if (timeFilter === 'Daily Avg') {
+    const groups = groupBy(arr, x => new Date(x.timeStamp).toISOString().split('T')[0]);
+    let newarr = [];
+    groups.forEach((g, idx) => {
+      newarr.push({
+        timeStamp: idx,
+        value: Math.round(g.reduce((total, obj) => total + obj.value, 0) / g.length),
+      });
+    });
+    return newarr;
+  }
+  return arr;
 };
+
 export const timeSeriesCache = {
   expiryTimestamp: null,
   value: null,
@@ -89,7 +143,7 @@ const getAllTimeSeries = async (timeFilter, db) => {
     })
     .filter(arr => filterByTime(arr, timeFilter));
 
-  return sampleByTime(timeFilteredResult, timeFilter);
+  return sampleByTime(timeFilteredResult, timeFilter, true);
 };
 
 handler.get(async (req, res) => {
