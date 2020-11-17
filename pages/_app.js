@@ -14,6 +14,7 @@ function MyApp({ Component, pageProps }) {
     <div>
       <head>
         <title>Evotracker</title>
+        <meta name="description" content="Track activity on games created by Evolution Gaming Group" />
         <script src="https://unpkg.com/ionicons@5.0.0/dist/ionicons.js"></script>
       </head>
       <div className={styles.container}>
