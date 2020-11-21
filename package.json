@@ -1,5 +1,6 @@
 {
   "name": "evotracker",
+  "author": "Gustav Kullberg",
   "version": "0.1.0",
   "private": true,
   "scripts": {
