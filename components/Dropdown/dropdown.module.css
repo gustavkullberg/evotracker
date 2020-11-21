@@ -1,0 +1,49 @@
+.dropdownContainer {
+  display: block;
+  margin-right: 1rem;
+}
+
+.dropdownContainer > button {
+  border-radius: 4px;
+}
+
+.button {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 0.875rem;
+  appearance: none;
+  font-size: 1rem;
+  background-color: #1b2631;
+  color: white;
+  border: none;
+  outline: none;
+}
+
+.button:hover,
+.button:focus {
+  background-color: #3d4852;
+}
+
+.button ion-icon {
+  margin-left: 0.5rem;
+}
+
+.dropdownList {
+  margin-top: 0.125rem;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  z-index: 50;
+  height: 100%;
+}
+
+.dropdownList > .button:first-child {
+  border-radius: 4px 4px 0px 0px;
+}
+
+.dropdownList > .button:last-child {
+  border-radius: 0px 0px 4px 4px;
+}
