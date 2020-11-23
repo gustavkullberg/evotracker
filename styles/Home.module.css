@@ -1,43 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=Lexend+Deca&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Aldrich&display=swap');
-
 .container {
   min-height: 100vh;
-  padding: 0 0.5rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  font-family: 'Aldrich', sans-serif;
+  font-family: "Aldrich", sans-serif;
 }
 .recharts-legend-item {
   font-size: 0.15rem;
 }
 
-.footer {
-  width: 100%;
-  height: 100%;
-  border-top: 1px solid #eaeaea;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding-bottom: 25px;
-}
-
-.footer a {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.footer img {
-  margin-right: 10px;
-}
-
 .card {
   background-color: white;
-  margin-top: 130px;
+  margin-top: 50px;
   margin-bottom: 50px;
   box-shadow: rgba(0, 0, 0, 0.5) 7px 7px 10px 0px;
   flex-basis: 45%;
@@ -71,31 +45,6 @@
   width: 95%;
   flex-direction: row;
   margin-bottom: 1rem;
-}
-
-.buttonDropdown {
-  display: flex;
-  flex-direction: column;
-  position: absolute;
-  z-index: 50;
-}
-
-.gameButton {
-  cursor: pointer;
-  padding: 0.875rem;
-  background-color: #1b2631;
-  color: white;
-  outline: none;
-  appearance: none;
-  border: none;
-  font-size: 1rem;
-  font-family: 'Aldrich', sans-serif;
-  text-align: left;
-  margin-right: 1.25rem;
-}
-
-.gameButton:hover {
-  background-color: #3d4852;
 }
 
 .selectionContainer {
@@ -146,7 +95,7 @@
 @media (max-width: 600px) {
   .card {
     width: 100%;
-    margin-top: 110px;
+    margin-top: 40px;
     padding-bottom: 100px;
   }
 
