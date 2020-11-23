@@ -37,7 +37,6 @@
   flex-direction: column;
   position: absolute;
   z-index: 50;
-  height: 100%;
 }
 
 .dropdownList > .button:first-child {
