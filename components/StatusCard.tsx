@@ -1,8 +1,18 @@
 import styles from '../styles/Home.module.css';
 import { gameShowTitles } from '../constants';
 
+type GameStats = {
+    livePlayers: number;
+    weekAvg: number;
+    timeStamp: Date;
+}
 
-export const StatusCard = ({ selectedGameShow, gameStats }) => {
+type StatusCardInput = {
+    selectedGameShow: string;
+    gameStats?: GameStats ;
+}
+
+export const StatusCard = ({ selectedGameShow, gameStats }: StatusCardInput) => {
     return <div className={styles.statusContiner}>
         <div className={styles.statusCard}>
             <h1>{gameShowTitles[selectedGameShow]}</h1>

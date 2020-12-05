@@ -3,12 +3,29 @@ import middleware from '../../middleware/db';
 import { groupBy } from '../../utils/groupBy';
 import { isOneDayAgo } from '../../utils/isOneDayAgo';
 import { isSevenDaysAgo } from '../../utils/isSevenDaysAgo';
+import type { NextApiResponse } from 'next'
+import type { NextApiRequestWithDb } from "../../utils/NextRequestWithDbType"
+import { Db } from 'mongodb';
+import TimeFilter from '../../utils/timeFIlter';
+
 
 const collectionName = 'evostats';
 
+type TimeSeriesEntry = {
+  timeStamp: Date
+  entry: {
+    'Crazy Time': number,
+    'Lightning Roulette': number,
+    'MONOPOLY Live': number,
+    'Mega Ball': number,
+    'Dream Catcher': number
+  }
+}
+
+
 const handler = nextConnect();
 handler.use(middleware);
-
+/* 
 const mapToMovingAverage = (arr, maIdx) => {
   const res1 = arr.map((a, idx) => {
     const minIndex = idx - maIdx >= 0 ? idx - maIdx : 0;
@@ -21,8 +38,8 @@ const mapToMovingAverage = (arr, maIdx) => {
   });
   return res1;
 };
-
-export const filterByTime = (a, timeFilter) => {
+ */
+export const filterByTime = (a: any, timeFilter: TimeFilter): boolean => {
   if (timeFilter === '1D') {
     return isOneDayAgo(a.timeStamp);
   } else if (timeFilter === '7D') {
@@ -32,11 +49,11 @@ export const filterByTime = (a, timeFilter) => {
   }
 };
 
-const sampleByTime = (arr, timeFilter, isAggregatedView = false) => {
-  if (isAggregatedView && timeFilter === 'Daily Max') {
+const sampleByTime = (arr, timeFilter: TimeFilter, isAggregatedView = false) => {
+  if (isAggregatedView && timeFilter === TimeFilter.DAILY_AVG) {
     const summedArr = arr.map(a => ({
       timeStamp: a.timeStamp,
-      value: Object.values(a.value).reduce((tot, obj) => tot + obj, 0),
+      value: Object.values(a.value).reduce((tot: number, obj: number) => tot + obj, 0),
     }));
     const groups = groupBy(summedArr, x => new Date(x.timeStamp).toISOString().split('T')[0]);
 
@@ -56,7 +73,8 @@ const sampleByTime = (arr, timeFilter, isAggregatedView = false) => {
     const timeStampsToCheck = res.map(r => r.timeStamp);
     return arr.filter(a => timeStampsToCheck.includes(a.timeStamp));
   }
-  if (isAggregatedView && timeFilter === 'Daily Avg') {
+
+  if (isAggregatedView && timeFilter === TimeFilter.DAILY_AVG) {
     const groups = groupBy(arr, x => new Date(x.timeStamp).toISOString().split('T')[0]);
     const resArr = [];
     groups.forEach((g, idx) => {
@@ -75,48 +93,55 @@ const sampleByTime = (arr, timeFilter, isAggregatedView = false) => {
     return resArr;
   }
 
-  if (timeFilter === 'Daily Max') {
+
+  if (timeFilter === TimeFilter.DAILY_MAX) {
     const groups = groupBy(arr, x => new Date(x.timeStamp).toISOString().split('T')[0]);
-    let newarr = [];
+    const newarr = [];
     groups.forEach((g, idx) => {
       newarr.push({
         timeStamp: idx,
         value: Math.max.apply(
-          Math,
-          g.map(function (o) {
-            return o.value;
-          })
+          {
+            ...Math, ...g.map(o => o.value)
+          }
         ),
       });
     });
     return newarr;
   }
 
-  if (timeFilter === 'Daily Avg') {
+  if (timeFilter === TimeFilter.DAILY_AVG) {
     const groups = groupBy(arr, x => new Date(x.timeStamp).toISOString().split('T')[0]);
-    let newarr = [];
+    groups
+    const newarr = [];
     groups.forEach((g, idx) => {
       newarr.push({
         timeStamp: idx,
-        value: Math.round(g.reduce((total, obj) => total + obj.value, 0) / g.length),
+        value: Math.round(g.reduce((total: number, obj: any) => total + obj.value, 0) / g.length),
       });
     });
     return newarr;
   }
+
   return arr;
 };
 
 export const timeSeriesCache = {
-  expiryTimestamp: null,
-  value: null,
+  expiryTimestamp: null as Date,
+  value: null as TimeSeriesEntry[]
 };
 
-const getTimeSeries = async db => {
-  if (timeSeriesCache.expiryTimestamp && timeSeriesCache.expiryTimestamp > Date.now()) {
+
+
+const getTimeSeries = async (db: Db): Promise<TimeSeriesEntry[]> => {
+
+  if (timeSeriesCache.expiryTimestamp && timeSeriesCache.expiryTimestamp.valueOf() > Date.now()) {
     return timeSeriesCache.value;
   }
-  const arr = await db.collection(collectionName).find().toArray();
   const now = new Date();
+  //const dateSevenDaysAgo = new Date(now.getTime() - 1000*60*60*24*7).toISOString();
+  //const arr = await db.collection(collectionName).find({"timeStamp": {$gt: fromDate}}).toArray();
+  const arr = await db.collection(collectionName).find().toArray();
   const expiryTimestamp = new Date(now.getTime() + 1000 * 60 * 5);
   timeSeriesCache.expiryTimestamp = expiryTimestamp;
 
@@ -124,7 +149,7 @@ const getTimeSeries = async db => {
   return timeSeriesCache.value;
 };
 
-const getTimeSeriesByProp = async (prop, timeFilter, db) => {
+const getTimeSeriesByProp = async (prop: string, timeFilter: TimeFilter, db: Db) => {
   const timeFilteredResult = (await getTimeSeries(db))
     .map(a => ({ timeStamp: a.timeStamp, value: a.entry[prop] }))
     .filter(arr => filterByTime(arr, timeFilter))
@@ -134,6 +159,7 @@ const getTimeSeriesByProp = async (prop, timeFilter, db) => {
 };
 
 const getAllTimeSeries = async (timeFilter, db) => {
+
   const timeFilteredResult = (await getTimeSeries(db))
     .map(ts => {
       return {
@@ -142,12 +168,13 @@ const getAllTimeSeries = async (timeFilter, db) => {
       };
     })
     .filter(arr => filterByTime(arr, timeFilter));
-
   return sampleByTime(timeFilteredResult, timeFilter, true);
 };
 
-handler.get(async (req, res) => {
-  const timeFilter = req.query.timeFilter;
+handler.get(async (req: NextApiRequestWithDb, res: NextApiResponse<Record<string, string>[]>) => {
+
+  const timeFilter: TimeFilter = req.query.timeFilter as TimeFilter
+
   if (req.query.gameShow) {
     switch (req.query.gameShow) {
       case 'CRAZY_TIME':

@@ -7,7 +7,7 @@ const filters = ["1D", "7D", "Daily Avg"];
 
 export default function Home() {
   const [selectedGameShow, setGameShow] = useState("ALL_SHOWS");
-  const [gameStats, setGameStats] = useState({});
+  const [gameStats, setGameStats] = useState({livePlayers:0, weekAvg: 0, timeStamp:new Date()});
   const [selectedFilter, setFilter] = useState("1D");
   const [timeSeries, setTimeSeries] = useState([]);
   const [gameSelectionIsOpen, setGameSelectionIsOpen] = useState(false);

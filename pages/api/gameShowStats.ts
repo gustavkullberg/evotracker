@@ -1,5 +1,9 @@
+import { Db } from 'mongodb';
+import { NextApiResponse } from 'next';
 import nextConnect from 'next-connect';
 import middleware from '../../middleware/db';
+import { NextApiRequestWithDb } from '../../utils/NextRequestWithDbType';
+import TimeFilter from '../../utils/timeFIlter';
 import { timeSeriesCache, filterByTime } from './gameShowHistory';
 
 const collectionName = 'evostats';
@@ -7,8 +11,14 @@ const collectionName = 'evostats';
 const handler = nextConnect();
 handler.use(middleware);
 
-const getTimeSeries = async db => {
-  if (timeSeriesCache.expiryTimestamp && timeSeriesCache.expiryTimestamp > Date.now()) {
+type GameShowStatsResponse = {
+  livePlayers: number;
+  weekAvg: number;
+  timeStamp: Date;
+}
+
+const getTimeSeries = async (db: Db) => {
+  if (timeSeriesCache.expiryTimestamp && timeSeriesCache.expiryTimestamp.valueOf() > Date.now()) {
     return timeSeriesCache.value;
   }
   const arr = await db.collection(collectionName).find().toArray();
@@ -20,10 +30,10 @@ const getTimeSeries = async db => {
   return timeSeriesCache.value;
 };
 
-const getStatsByProp = async (prop, db) => {
+const getStatsByProp = async (prop: string, db: Db) => {
   const timeFilteredResult = (await getTimeSeries(db))
     .map(a => ({ timeStamp: a.timeStamp, value: a.entry[prop] }))
-    .filter(arr => filterByTime(arr, '7D'))
+    .filter(arr => filterByTime(arr, TimeFilter["7D"]))
     .filter(a => a.value);
 
   const weekAvg = Math.round(
@@ -37,7 +47,7 @@ const getStatsByProp = async (prop, db) => {
   };
 };
 
-const getStatsAllGames = async db => {
+const getStatsAllGames = async (db: Db): Promise<GameShowStatsResponse> => {
   const timeFilteredResult = (await getTimeSeries(db))
     .map(ts => {
       return {
@@ -45,7 +55,7 @@ const getStatsAllGames = async db => {
         value: ts.entry,
       };
     })
-    .filter(arr => filterByTime(arr, '7D'));
+    .filter(arr => filterByTime(arr, TimeFilter["7D"]));
 
   const weekAvg = Math.round(
     timeFilteredResult.reduce((total, obj) => {
@@ -69,7 +79,7 @@ const getStatsAllGames = async db => {
   };
 };
 
-handler.get(async (req, res) => {
+handler.get(async (req: NextApiRequestWithDb, res: NextApiResponse<GameShowStatsResponse>) => {
   const gameShow = req.query.gameShow;
   if (gameShow) {
     switch (gameShow) {
@@ -93,8 +103,11 @@ handler.get(async (req, res) => {
         return res.json(await getStatsByProp('Lightning Baccarat', req.db));
       case 'ALL_SHOWS':
         return res.json(await getStatsAllGames(req.db));
-      default:
-        return res.json(await req.db.collection(collectionName).find().toArray());
+      default: {
+        res.statusCode = 400;
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ status: 'Bad Request' }));
+      }
     }
   } else {
     res.statusCode = 400;

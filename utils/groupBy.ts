@@ -1,4 +1,4 @@
-export const groupBy = (list, keyGetter) => {
+export const groupBy = (list: Map<number, any>, keyGetter: (item: any) => string): Map<number, any> => {
   const map = new Map();
   list.forEach(item => {
     const key = keyGetter(item);
