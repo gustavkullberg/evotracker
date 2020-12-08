@@ -1,5 +1,6 @@
 import styles from '../styles/Home.module.css';
 import React from 'react';
+/* 
 type GameStats = {
     livePlayers: number;
     weekAvg: number;
@@ -16,11 +17,11 @@ type StatusCardInput = {
     gameStats?: GameStats;
     topFiveShows?: Show[];
     setGameShow?: any;
-}
+} */
 
 const defaultNumberOfTopShows = 10;
 
-export const StatusCard = ({ selectedGameShow, gameStats, topFiveShows, setGameShow }: StatusCardInput): JSX.Element => {
+export const StatusCard = ({ selectedGameShow, gameStats, topFiveShows, setGameShow }) => {
     const [nofShowsListed, setNofShowsListed] = React.useState(defaultNumberOfTopShows);
     return <div className={styles.statusContiner}>
         <div className={styles.statusCard}>
@@ -29,7 +30,6 @@ export const StatusCard = ({ selectedGameShow, gameStats, topFiveShows, setGameS
                 <div className={styles.gameRankingList}>
                     {topFiveShows.slice(0, nofShowsListed).map((show, idx) => <div key={idx} >
                         <p onClick={() => setGameShow(show.name)}>{idx + 1}. {show.name} | {show.players}</p>
-
                     </div>)}
                 </div>
 
@@ -41,9 +41,7 @@ export const StatusCard = ({ selectedGameShow, gameStats, topFiveShows, setGameS
                     name={"chevron-down-outline"}
                     onClick={() => setNofShowsListed(nofShowsListed + 10)}
                 />
-
                 }
-
             </div>}
 
             <div className={styles.gameRankingList}>
