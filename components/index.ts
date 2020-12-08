@@ -3,3 +3,4 @@ export { Footer } from "./Footer";
 export { Chart } from "./Chart";
 export { StatusCard } from "./StatusCard";
 export { Dropdown } from "./Dropdown";
+export { LineChart } from "./LineChart"

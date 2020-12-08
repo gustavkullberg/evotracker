@@ -14,7 +14,7 @@ export const Chart = ({ timeSeries, selectedGameShow, selectedFilter }) => {
                     minTickGap={isMobile ? 16 : 100}
                     tickFormatter={unixTime => {
                         if (selectedFilter === '1D') return moment(unixTime).format('HH:mm');
-                        else if (selectedFilter === '7D') return moment(unixTime).format(isMobile ? 'ddd' : 'ddd Do');
+                        else if (selectedFilter === '10D') return moment(unixTime).format(isMobile ? 'ddd' : 'ddd Do');
                         else if (selectedFilter === 'Daily Max') return moment(unixTime).format("MMM Do");
                         else if (selectedFilter === 'Daily Avg') return moment(unixTime).format("MMM Do");
                     }}

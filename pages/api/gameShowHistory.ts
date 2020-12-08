@@ -42,7 +42,7 @@ const mapToMovingAverage = (arr, maIdx) => {
 export const filterByTime = (a: any, timeFilter: TimeFilter): boolean => {
   if (timeFilter === '1D') {
     return isOneDayAgo(a.timeStamp);
-  } else if (timeFilter === '7D') {
+  } else if (timeFilter === '10D') {
     return isSevenDaysAgo(a.timeStamp);
   } else {
     return true;
@@ -50,7 +50,7 @@ export const filterByTime = (a: any, timeFilter: TimeFilter): boolean => {
 };
 
 const sampleByTime = (arr, timeFilter: TimeFilter, isAggregatedView = false) => {
-  if (isAggregatedView && timeFilter === TimeFilter.DAILY_AVG) {
+  if (isAggregatedView && timeFilter === TimeFilter.DAILY_MAX) {
     const summedArr = arr.map(a => ({
       timeStamp: a.timeStamp,
       value: Object.values(a.value).reduce((tot: number, obj: number) => tot + obj, 0),
@@ -98,12 +98,12 @@ const sampleByTime = (arr, timeFilter: TimeFilter, isAggregatedView = false) => 
     const groups = groupBy(arr, x => new Date(x.timeStamp).toISOString().split('T')[0]);
     const newarr = [];
     groups.forEach((g, idx) => {
+      const arr = g.map(o => o.value)
       newarr.push({
         timeStamp: idx,
         value: Math.max.apply(
-          {
-            ...Math, ...g.map(o => o.value)
-          }
+          null,
+          arr
         ),
       });
     });
@@ -159,7 +159,6 @@ const getTimeSeriesByProp = async (prop: string, timeFilter: TimeFilter, db: Db)
 };
 
 const getAllTimeSeries = async (timeFilter, db) => {
-
   const timeFilteredResult = (await getTimeSeries(db))
     .map(ts => {
       return {
@@ -174,7 +173,6 @@ const getAllTimeSeries = async (timeFilter, db) => {
 handler.get(async (req: NextApiRequestWithDb, res: NextApiResponse<Record<string, string>[]>) => {
 
   const timeFilter: TimeFilter = req.query.timeFilter as TimeFilter
-
   if (req.query.gameShow) {
     switch (req.query.gameShow) {
       case 'CRAZY_TIME':
@@ -197,8 +195,11 @@ handler.get(async (req: NextApiRequestWithDb, res: NextApiResponse<Record<string
         return res.json(await getTimeSeriesByProp('Lightning Baccarat', timeFilter, req.db));
       case 'ALL_SHOWS':
         return res.json(await getAllTimeSeries(timeFilter, req.db));
-      default:
-        return res.json(await req.db.collection(collectionName).find().toArray());
+      default: {
+        res.statusCode = 400;
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ status: 'Bad Request' }));
+      }
     }
   } else {
     res.statusCode = 400;

@@ -62,12 +62,15 @@
 .statusCard {
   display: flex;
   align-items: center;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: space-between;
   width: 95%;
   background-color: #1b2631;
   color: white;
   margin-bottom: 20px;
   padding-bottom: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
   box-shadow: rgba(0, 0, 0, 0.5) 7px 7px 10px 0px;
 }
 .selectionButtonsContainer {
@@ -84,6 +87,7 @@
   display: flex;
   align-items: center;
   flex-direction: column;
+  padding-top: 25px;
 }
 
 .statusCard p {
@@ -92,11 +96,22 @@
 .statusProp p {
   font-size: 0.6rem;
 }
+
+.gameRankingList {
+  display: flex;
+  flex-direction: column;
+}
+
+.gameRankingList p {
+  font-size: 0.6rem;
+  justify-content: baseline;
+}
+
 @media (max-width: 600px) {
   .card {
     width: 100%;
     margin-top: 40px;
-    padding-bottom: 100px;
+    padding-bottom: 40px;
   }
 
   .container {
@@ -106,5 +121,16 @@
   .grid {
     width: 100%;
     flex-direction: column;
+  }
+
+  .statusCard {
+    flex-direction: column;
+  }
+}
+
+@media (min-width: 1200px) {
+  .statusCard {
+    padding-left: 150px;
+    padding-right: 150px;
   }
 }

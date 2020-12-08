@@ -80,34 +80,13 @@ const getStatsAllGames = async (db: Db): Promise<GameShowStatsResponse> => {
 };
 
 handler.get(async (req: NextApiRequestWithDb, res: NextApiResponse<GameShowStatsResponse>) => {
-  const gameShow = req.query.gameShow;
+  const gameShow = req.query.gameShow as string;
   if (gameShow) {
     switch (gameShow) {
-      case 'CRAZY_TIME':
-        return res.json(await getStatsByProp('Crazy Time', req.db));
-      case 'MONOPOLY':
-        return res.json(await getStatsByProp('MONOPOLY Live', req.db));
-      case 'LIGHTNING_ROULETTE':
-        return res.json(await getStatsByProp('Lightning Roulette', req.db));
-      case 'MEGA_BALL':
-        return res.json(await getStatsByProp('Mega Ball', req.db));
-      case 'DREAM_CATCHER':
-        return res.json(await getStatsByProp('Dream Catcher', req.db));
-      case 'SPEED_BACCARAT_A':
-        return res.json(await getStatsByProp('Speed Baccarat A', req.db));
-      case 'SPEED_BACCARAT_B':
-        return res.json(await getStatsByProp('Speed Baccarat B', req.db));
-      case 'SUPER_SIC_BO':
-        return res.json(await getStatsByProp('Super Sic Bo', req.db));
-      case 'LIGHTNING_BACCARAT':
-        return res.json(await getStatsByProp('Lightning Baccarat', req.db));
-      case 'ALL_SHOWS':
+      case 'All Shows':
         return res.json(await getStatsAllGames(req.db));
-      default: {
-        res.statusCode = 400;
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({ status: 'Bad Request' }));
-      }
+      default:
+        return res.json(await getStatsByProp(gameShow, req.db))
     }
   } else {
     res.statusCode = 400;
