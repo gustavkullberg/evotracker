@@ -11,13 +11,22 @@ export default function Home(): JSX.Element {
   const [gameStats, setGameStats] = useState({ livePlayers: 0, weekAvg: 0, timeStamp: null });
   const [selectedFilter, setFilter] = useState("1D");
   const [timeSeries, setTimeSeries] = useState([]);
+  const [topList, setTopList] = useState([]);
   const [gameSelectionIsOpen, setGameSelectionIsOpen] = useState(false);
   const [filterSelectionIsOpen, setFilterSelectionIsOpen] = useState(false);
 
   const fetchTimeSeries = (gameShow, filter) => {
     fetch(`api/gameShowHistory?gameShow=ALL_SHOWS&timeFilter=${filter}`)
       .then((response) => response.json())
-      .then((data) => setTimeSeries(data));
+      .then((data) => {
+
+        setTimeSeries(data)
+        if (filter === "1D" || filter === "10D") {
+          setTopList(Object.keys(data[data.length - 1].value)
+            .map(key => ({ name: key, players: data[data.length - 1].value[key] }))
+            .sort((l, r) => r.players - l.players))
+        }
+      });
   };
 
   const fetchGameStats = (gameShow) => {
@@ -53,11 +62,7 @@ export default function Home(): JSX.Element {
   return (
     <div className={styles.card}>
 
-      <StatusCard selectedGameShow={selectedGameShow} setGameShow={setShowClick} gameStats={gameStats} topFiveShows={timeSeries.length > 0
-        ? Object.keys(timeSeries[timeSeries.length - 1].value)
-          .map(key => ({ name: key, players: timeSeries[timeSeries.length - 1].value[key] }))
-          .sort((l, r) => r.players - l.players)
-        : null} />
+      <StatusCard selectedGameShow={selectedGameShow} setGameShow={setShowClick} gameStats={gameStats} topFiveShows={topList} />
 
       <div className={styles.selectionContainer}>
         <div className={styles.gameButtonContainer}>

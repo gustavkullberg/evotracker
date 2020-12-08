@@ -1,12 +1,11 @@
 import nextConnect from 'next-connect';
 import middleware from '../../middleware/db';
 import { groupBy } from '../../utils/groupBy';
-import { isOneDayAgo } from '../../utils/isOneDayAgo';
-import { isSevenDaysAgo } from '../../utils/isSevenDaysAgo';
 import type { NextApiResponse } from 'next'
 import type { NextApiRequestWithDb } from "../../utils/NextRequestWithDbType"
 import { Db } from 'mongodb';
 import TimeFilter from '../../utils/timeFIlter';
+import { isNDaysAgo } from '../../utils/isNDaysAgo';
 
 
 const collectionName = 'evostats';
@@ -41,9 +40,13 @@ const mapToMovingAverage = (arr, maIdx) => {
  */
 export const filterByTime = (a: any, timeFilter: TimeFilter): boolean => {
   if (timeFilter === '1D') {
-    return isOneDayAgo(a.timeStamp);
-  } else if (timeFilter === '10D') {
-    return isSevenDaysAgo(a.timeStamp);
+    return isNDaysAgo(a.timeStamp, 1);
+  }
+  else if (timeFilter === "7D") {
+    return isNDaysAgo(a.timeStamp, 7);
+  }
+  else if (timeFilter === '10D') {
+    return isNDaysAgo(a.timeStamp, 10);
   } else {
     return true;
   }
