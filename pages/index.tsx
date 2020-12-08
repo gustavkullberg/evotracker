@@ -53,7 +53,7 @@ export default function Home(): JSX.Element {
   return (
     <div className={styles.card}>
 
-      <StatusCard selectedGameShow={selectedGameShow} setGameShow={setGameShow} gameStats={gameStats} topFiveShows={timeSeries.length > 0
+      <StatusCard selectedGameShow={selectedGameShow} setGameShow={setShowClick} gameStats={gameStats} topFiveShows={timeSeries.length > 0
         ? Object.keys(timeSeries[timeSeries.length - 1].value)
           .map(key => ({ name: key, players: timeSeries[timeSeries.length - 1].value[key] }))
           .sort((l, r) => r.players - l.players)
