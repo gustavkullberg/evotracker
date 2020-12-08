@@ -4,7 +4,7 @@ import { StatusCard, Dropdown, LineChart } from "../components";
 import TimeFilter from "../utils/timeFIlter";
 import { Bars } from "../components/BarChart";
 
-const filters = ["1D", "10D", "Daily Avg"];
+const filters = ["1D", "10D", "Daily Avg", "Daily Max"];
 
 export default function Home(): JSX.Element {
   const [selectedGameShow, setGameShow] = useState("All Shows");
@@ -56,7 +56,13 @@ export default function Home(): JSX.Element {
 
   const extractGameShowList = () => {
     const games = timeSeries && timeSeries.length > 0 && Object.keys(timeSeries[timeSeries.length - 1].value);
-    return games ? ["All Shows", ...games] : ["All Shows"]
+    if (games && games.includes("All Shows")) {
+      return games;
+    } else if (games) {
+      return ["All Shows", ...games]
+    } else {
+      return ["All Shows"]
+    }
   }
 
   return (
@@ -84,11 +90,10 @@ export default function Home(): JSX.Element {
       </div>
       <div >
         {
-          selectedFilter === TimeFilter.DAILY_AVG ? <Bars timeSeries={timeSeries.map((j) => {
+          selectedFilter === TimeFilter.DAILY_AVG || selectedFilter === TimeFilter.DAILY_MAX ? <Bars timeSeries={timeSeries.map((j) => {
             return {
               timeStamp: new Date(j.timeStamp).getTime(),
-              players: selectedGameShow === "All Shows" ?
-                Object.values(j.value).reduce((res2: number, obj2: number) => res2 + obj2, 0) : j.value[selectedGameShow],
+              players: Math.round(j.value[selectedGameShow]),
             }
           }).filter(f => f.players)}
             selectedFilter={selectedFilter} />
