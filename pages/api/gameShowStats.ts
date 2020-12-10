@@ -15,20 +15,28 @@ type GameShowStatsResponse = {
   livePlayers: number;
   weekAvg: number;
   timeStamp: Date;
+  ath: number
 }
 
 const getTimeSeries = async (db: Db) => {
   if (timeSeriesCache.expiryTimestamp && timeSeriesCache.expiryTimestamp.valueOf() > Date.now()) {
     return timeSeriesCache.value;
   }
-  const arr = await db.collection(collectionName).find().toArray();
+
   const now = new Date();
+  const dateSevenDaysAgo = new Date(now.getTime() - 1000 * 60 * 60 * 24 * 10).toISOString();
+  const arr = await db.collection(collectionName).find({ "timeStamp": { $gt: dateSevenDaysAgo } }).toArray();
   const expiryTimestamp = new Date(now.getTime() + 1000 * 60 * 5);
   timeSeriesCache.expiryTimestamp = expiryTimestamp;
 
   timeSeriesCache.value = arr;
   return timeSeriesCache.value;
 };
+
+const getGameInfoByProp = async (prop: string, db: Db) => {
+  const gameInfos = await db.collection("gameInfo").find().toArray();
+  return gameInfos.find(h => h.game === prop)
+}
 
 const getStatsByProp = async (prop: string, db: Db) => {
   const timeFilteredResult = (await getTimeSeries(db))
@@ -39,11 +47,13 @@ const getStatsByProp = async (prop: string, db: Db) => {
   const weekAvg = Math.round(
     timeFilteredResult.reduce((total, obj) => total + obj.value, 0) / timeFilteredResult.length
   );
+  const { ath } = await getGameInfoByProp(prop, db);
 
   return {
     livePlayers: timeFilteredResult[timeFilteredResult.length - 1].value,
     timeStamp: timeFilteredResult[timeFilteredResult.length - 1].timeStamp,
     weekAvg,
+    ath
   };
 };
 
@@ -71,11 +81,13 @@ const getStatsAllGames = async (db: Db): Promise<GameShowStatsResponse> => {
     (res, obj) => res + obj,
     0
   );
+  const { ath } = await getGameInfoByProp("All Shows", db);
 
   return {
     livePlayers,
     weekAvg,
     timeStamp: timeFilteredResult[timeFilteredResult.length - 1].timeStamp,
+    ath
   };
 };
 

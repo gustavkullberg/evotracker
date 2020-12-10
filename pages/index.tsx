@@ -14,19 +14,22 @@ export default function Home(): JSX.Element {
   const [topList, setTopList] = useState([]);
   const [gameSelectionIsOpen, setGameSelectionIsOpen] = useState(false);
   const [filterSelectionIsOpen, setFilterSelectionIsOpen] = useState(false);
+  const [isFetchingTimeSeries, setIsFetchingTimeSeries] = useState(false);
 
   const fetchTimeSeries = (gameShow, filter) => {
+    setIsFetchingTimeSeries(true);
     fetch(`api/gameShowHistory?gameShow=ALL_SHOWS&timeFilter=${filter}`)
       .then((response) => response.json())
       .then((data) => {
-
         setTimeSeries(data)
+        setIsFetchingTimeSeries(false);
+
         if (filter === "1D" || filter === "10D") {
           setTopList(Object.keys(data[data.length - 1].value)
             .map(key => ({ name: key, players: data[data.length - 1].value[key] }))
             .sort((l, r) => r.players - l.players))
         }
-      });
+      }).catch(e => setIsFetchingTimeSeries(false))
   };
 
   const fetchGameStats = (gameShow) => {
@@ -96,7 +99,8 @@ export default function Home(): JSX.Element {
               players: Math.round(j.value[selectedGameShow]),
             }
           }).filter(f => f.players)}
-            selectedFilter={selectedFilter} />
+            selectedFilter={selectedFilter}
+            isFetchingTimeSeries={isFetchingTimeSeries} />
             :
             <LineChart timeSeries={timeSeries.map((j) => {
               return {
@@ -105,7 +109,9 @@ export default function Home(): JSX.Element {
                   Object.values(j.value).reduce((res2: number, obj2: number) => res2 + obj2, 0) : j.value[selectedGameShow],
               }
             }).filter(f => f.players)}
-              selectedFilter={selectedFilter} />
+              selectedFilter={selectedFilter}
+              isFetchingTimeSeries={isFetchingTimeSeries}
+            />
         }
       </div>
     </div>

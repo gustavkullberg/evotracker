@@ -4,10 +4,10 @@ import moment from 'moment';
 import '../styles/Home.module.css';
 import React from 'react';
 
-export const Bars = ({ timeSeries, selectedFilter }): JSX.Element => {
+export const Bars = ({ timeSeries, selectedFilter, isFetchingTimeSeries }): JSX.Element => {
     const [focusBar, setFocusBar] = React.useState(null);
 
-    return ((timeSeries.length > 0 ? (
+    return ((timeSeries.length > 0 && !isFetchingTimeSeries ? (
         <ResponsiveContainer width="96%" height={isMobile ? 400 : 450}>
             <BarChart data={timeSeries} onMouseMove={state => {
                 if (state.isTooltipActive) {

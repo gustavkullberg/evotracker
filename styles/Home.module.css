@@ -63,7 +63,6 @@
   display: flex;
   align-items: center;
   flex-direction: row;
-  justify-content: space-between;
   width: 95%;
   background-color: #1b2631;
   color: white;
@@ -90,11 +89,24 @@
   padding-top: 25px;
 }
 
+.statusCardContent {
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+}
+
 .statusCard p {
   font-size: 0.8rem;
 }
+
 .statusProp p {
   font-size: 0.6rem;
+}
+
+.gameRankingListContainer {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
 }
 
 .gameRankingList {
@@ -111,7 +123,7 @@
 @media (max-width: 800px) {
   .card {
     width: 100%;
-    margin-top: 40px;
+    margin-top: 0px;
     padding-bottom: 40px;
   }
 
@@ -124,7 +136,7 @@
     flex-direction: column;
   }
 
-  .statusCard {
+  .statusCardContent {
     flex-direction: column;
   }
 }

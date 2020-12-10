@@ -4,8 +4,8 @@ import moment from 'moment';
 import '../styles/Home.module.css';
 import React from 'react';
 
-export const LineChart = ({ timeSeries, selectedFilter }) => {
-    return ((timeSeries.length > 0 ? (
+export const LineChart = ({ timeSeries, selectedFilter, isFetchingTimeSeries }) => {
+    return ((timeSeries.length > 0 && !isFetchingTimeSeries ? (
         <ResponsiveContainer width="96%" height={isMobile ? 400 : 450}>
             <AreaChart data={timeSeries} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
                 <XAxis
