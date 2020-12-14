@@ -81,6 +81,7 @@ export default function Home(): JSX.Element {
             isOpen={filterSelectionIsOpen}
             setClick={setFilterClick}
             setIsOpen={setFilterSelectionIsOpen}
+            hasFilter={false}
           />
           <Dropdown
             label={selectedGameShow}
@@ -88,6 +89,7 @@ export default function Home(): JSX.Element {
             isOpen={gameSelectionIsOpen}
             setClick={setShowClick}
             setIsOpen={setGameSelectionIsOpen}
+            hasFilter={true}
           />
         </div>
       </div>

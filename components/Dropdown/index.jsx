@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import styles from "./dropdown.module.css";
 import { useOutsideClick } from "../../utils";
 
-export const Dropdown = ({ isOpen, options, label, setIsOpen, setClick }) => {
+export const Dropdown = ({ isOpen, options, label, setIsOpen, setClick, hasFilter }) => {
   const dropdownRef = useRef(null);
   const [text, setText] = useState("");
 
@@ -16,8 +16,8 @@ export const Dropdown = ({ isOpen, options, label, setIsOpen, setClick }) => {
 
   return (
     <div ref={dropdownRef} className={styles.dropdownContainer}>
-      <button onClick={toggleDropdown} className={styles.button} disabled={isOpen}>
-        {isOpen ? <input type="text" onKeyUp={event => event.preventDefault()} autoFocus="true" value={text} onChange={event => setText(event.target.value)
+      <button onClick={toggleDropdown} className={styles.button} disabled={isOpen && hasFilter}>
+        {isOpen && hasFilter ? <input type="text" onKeyUp={event => event.preventDefault()} autoFocus="true" value={text} onChange={event => setText(event.target.value)
         }></input> : <span>
             {label}
           </span>}
