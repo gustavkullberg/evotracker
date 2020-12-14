@@ -1,9 +1,10 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import styles from "./dropdown.module.css";
 import { useOutsideClick } from "../../utils";
 
 export const Dropdown = ({ isOpen, options, label, setIsOpen, setClick }) => {
   const dropdownRef = useRef(null);
+  const [text, setText] = useState("");
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
@@ -15,8 +16,11 @@ export const Dropdown = ({ isOpen, options, label, setIsOpen, setClick }) => {
 
   return (
     <div ref={dropdownRef} className={styles.dropdownContainer}>
-      <button onClick={toggleDropdown} className={styles.button}>
-        <span>{label}</span>
+      <button onClick={toggleDropdown} className={styles.button} disabled={isOpen}>
+        {isOpen ? <input type="text" onKeyUp={event => event.preventDefault()} autoFocus="true" value={text} onChange={event => setText(event.target.value)
+        }></input> : <span>
+            {label}
+          </span>}
         <ion-icon
           name={isOpen ? "chevron-up-outline" : "chevron-down-outline"}
         />
@@ -24,11 +28,11 @@ export const Dropdown = ({ isOpen, options, label, setIsOpen, setClick }) => {
       {isOpen && (
         <div className={styles.dropdownList}>
           {options.map((option, idx) =>
-            option !== label ? (
+            option !== label && option.toLowerCase().includes(text.toLowerCase()) ? (
               <button
                 key={idx}
                 className={styles.button}
-                onClick={() => setClick(option)}
+                onClick={() => { setText(""); setClick(option) }}
               >
                 {option}
               </button>

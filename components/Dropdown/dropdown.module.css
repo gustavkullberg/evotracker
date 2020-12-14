@@ -46,3 +46,13 @@
 .dropdownList > .button:last-child {
   border-radius: 0px 0px 4px 4px;
 }
+
+.button input {
+  width: 100%;
+  color: white;
+  background-color: #1b2631;
+  border-radius: 0px;
+  border-color: #1b2631;
+  font-size: 1.2rem;
+  outline: none;
+}
