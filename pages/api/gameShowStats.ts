@@ -24,7 +24,7 @@ const getTimeSeries = async (db: Db) => {
   }
 
   const now = new Date();
-  const dateSevenDaysAgo = new Date(now.getTime() - 1000 * 60 * 60 * 24 * 10).toISOString();
+  const dateSevenDaysAgo = new Date(now.getTime() - 1000 * 60 * 60 * 24 * 1).toISOString();
   const arr = await db.collection(collectionName).find({ "timeStamp": { $gt: dateSevenDaysAgo } }).toArray();
   const expiryTimestamp = new Date(now.getTime() + 1000 * 60 * 5);
   timeSeriesCache.expiryTimestamp = expiryTimestamp;
