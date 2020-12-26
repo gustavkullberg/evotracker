@@ -1,11 +1,41 @@
 import { isMobile } from 'react-device-detect';
-import { XAxis, YAxis, Tooltip, Bar, BarChart, ResponsiveContainer, CartesianGrid, Cell } from 'recharts';
+import { XAxis, YAxis, Tooltip, Bar, BarChart, ResponsiveContainer, CartesianGrid, Cell, LabelList } from 'recharts';
 import moment from 'moment';
 import '../styles/Home.module.css';
 import React from 'react';
 
+
+const renderCustomizedLabel = (props) => {
+    const { x, y, width, index } = props;
+    const radius = 8;
+    return index === 32 ? (
+        <g>
+            <circle cx={x + width / 2} cy={y - radius} r={radius} fill="#1b2631" />
+            <text x={x + width / 2} y={y - radius} fill="#fff" textAnchor="middle" dominantBaseline="middle">
+                !
+            </text>
+        </g>
+    ) : undefined;
+};
+
 export const Bars = ({ timeSeries, selectedFilter, isFetchingTimeSeries }): JSX.Element => {
     const [focusBar, setFocusBar] = React.useState(null);
+
+    const CustomTooltip = ({ active, payload, label }) => {
+        if (active) {
+            return (
+                <div className="custom-tooltip" style={{ backgroundColor: "white", margin: "0px", padding: "10px", border: "1px solid rgb(204, 204, 204)" }}>
+                    <p className="label">{`${moment(label).format(selectedFilter.includes("Daily") ? 'ddd Do MMM' : 'HH:mm,  Do MMM')} `}</p>
+                    <p>{`Players: ${payload[0].value}`} </p>
+                    {new Date(label).toISOString().split("T")[0] === "2020-12-14" ?
+                        <p style={{ color: "red" }} className="desc">More games tracked</p>
+                        : undefined}
+                </div>
+            );
+        }
+        return null;
+    };
+
 
     return ((timeSeries.length > 0 && !isFetchingTimeSeries ? (
         <ResponsiveContainer width="96%" height={isMobile ? 400 : 450}>
@@ -49,11 +79,12 @@ export const Bars = ({ timeSeries, selectedFilter, isFetchingTimeSeries }): JSX.
                     </linearGradient>
                 </defs>
 
-                <Tooltip viewBox={{ x: 1000, y: 0, width: 800, height: 400 }} labelFormatter={(time: Date) => `${moment(time).format(selectedFilter.includes("Daily") ? 'ddd Do MMM' : 'HH:mm,  Do MMM')}`} />
+                <Tooltip viewBox={{ x: 1000, y: 0, width: 800, height: 400 }} content={CustomTooltip} labelFormatter={(time: Date) => `${moment(time).format(selectedFilter.includes("Daily") ? 'ddd Do MMM' : 'HH:mm,  Do MMM')}`} />
                 <Bar stackId="1" type="monotone" dataKey="players" stroke="black" fill="url(#evoblack)" >
                     {timeSeries.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={isSameDayAsMarked(focusBar, index) ? '#1b2631' : "url(#evoblack)"} />
                     ))}
+                    <LabelList dataKey="hasMajorDataChange" position="top" content={renderCustomizedLabel} />
                 </Bar>
 
 
