@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "../styles/Home.module.css";
-import { StatusCard, Dropdown, LineChart } from "../components";
+import { StatusCard, Dropdown, LineChart, SubscribeButton, SubscribeModal } from "../components";
 import TimeFilter from "../utils/timeFIlter";
 import { Bars } from "../components/BarChart";
 
@@ -15,6 +15,7 @@ export default function Home(): JSX.Element {
   const [gameSelectionIsOpen, setGameSelectionIsOpen] = useState(false);
   const [filterSelectionIsOpen, setFilterSelectionIsOpen] = useState(false);
   const [isFetchingTimeSeries, setIsFetchingTimeSeries] = useState(false);
+  const [subscribeModalIsOpen, setSubscribeModalIsOpen] = useState(false);
 
   const fetchTimeSeries = (gameShow, filter) => {
     setIsFetchingTimeSeries(true);
@@ -70,7 +71,7 @@ export default function Home(): JSX.Element {
 
   return (
     <div className={styles.card}>
-
+      <SubscribeModal isOpen={subscribeModalIsOpen} closeModal={() => setSubscribeModalIsOpen(false)} selectedGameShow={selectedGameShow} />
       <StatusCard selectedGameShow={selectedGameShow} setGameShow={setShowClick} gameStats={gameStats} topFiveShows={topList} />
 
       <div className={styles.selectionContainer}>
@@ -91,6 +92,7 @@ export default function Home(): JSX.Element {
             setIsOpen={setGameSelectionIsOpen}
             hasFilter={true}
           />
+          <SubscribeButton onClickFunction={() => setSubscribeModalIsOpen(true)} />
         </div>
       </div>
       <div >

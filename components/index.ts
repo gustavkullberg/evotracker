@@ -4,3 +4,6 @@ export { Chart } from "./Chart";
 export { StatusCard } from "./StatusCard";
 export { Dropdown } from "./Dropdown";
 export { LineChart } from "./LineChart"
+export { SubscribeButton } from "./SubscribeButton"
+export { SubscribeModal } from "./SubscribeModal"
+export { Switch } from "./Switch"

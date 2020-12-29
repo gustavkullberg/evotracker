@@ -1,0 +1,29 @@
+.subscribeButtonContainer {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+  height: 100%;
+}
+
+.subscribeButton {
+  display: flex;
+  justify-content: center;
+  border-radius: 4px;
+  cursor: pointer;
+  /* padding: 0.875rem; */
+  appearance: none;
+  font-size: 1rem;
+  background-color: #1b2631;
+  color: white;
+  border: none;
+  outline: none;
+
+  padding: 7px;
+}
+/* 
+.subscribeButton:hover {
+  color: black;
+} */
+.subscribeButton p {
+  color: pink;
+}

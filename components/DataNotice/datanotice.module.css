@@ -1,0 +1,27 @@
+.dataNoticeContainer {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.dataNoticeBox {
+  display: flex;
+  justify-content: center;
+  justify-items: center;
+  align-items: center;
+  width: 95%;
+
+  background-color: rgb(242, 208, 207);
+  padding: 10px;
+}
+.dataNoticeBox p {
+  color: black;
+}
+
+.closeButton {
+  width: 100%;
+  display: flex;
+  justify-items: end;
+  align-items: flex-end;
+}

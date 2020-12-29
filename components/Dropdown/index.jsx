@@ -17,7 +17,7 @@ export const Dropdown = ({ isOpen, options, label, setIsOpen, setClick, hasFilte
   return (
     <div ref={dropdownRef} className={styles.dropdownContainer}>
       <button onClick={toggleDropdown} className={styles.button} disabled={isOpen && hasFilter}>
-        {isOpen && hasFilter ? <input type="text" onKeyUp={event => event.preventDefault()} autoFocus="true" value={text} onChange={event => setText(event.target.value)
+        {isOpen && hasFilter ? <input type="text" onKeyUp={event => event.preventDefault()} value={text} onChange={event => setText(event.target.value)
         }></input> : <span>
             {label}
           </span>}
