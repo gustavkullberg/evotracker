@@ -4,6 +4,7 @@
   flex-direction: column;
   align-items: center;
   font-family: "Aldrich", sans-serif;
+  background: linear-gradient(165.88deg, #1b2631 1.4%, white 104.08%);
 }
 .recharts-legend-item {
   font-size: 0.15rem;
@@ -118,6 +119,28 @@
   font-size: 0.6rem;
   justify-content: baseline;
   cursor: pointer;
+}
+
+.spinner {
+  animation: rotation 1s infinite linear;
+  margin-top: 20px;
+  width: 400px;
+}
+
+@keyframes rotation {
+  0% {
+    opacity: 25%;
+  }
+  25% {
+    opacity: 50%;
+  }
+
+  50% {
+    opacity: 75%;
+  }
+  75% {
+    opacity: 100%;
+  }
 }
 
 @media (max-width: 800px) {
