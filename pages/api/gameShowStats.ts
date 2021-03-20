@@ -102,7 +102,8 @@ handler.get(async (req: NextApiRequestWithDb, res: NextApiResponse<GameShowStats
     }
   } else {
     res.statusCode = 400;
-    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Type', 'application/json')
+    res.setHeader("cache-control", "s-maxage=180")
     res.end(JSON.stringify({ status: 'Bad Request' }));
   }
 });
