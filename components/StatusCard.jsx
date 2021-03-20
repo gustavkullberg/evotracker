@@ -57,7 +57,7 @@ export const StatusCard = ({ selectedGameShow, gameStats, topFiveShows, setGameS
                             <div style={{ marginRight: "10px" }} >
                                 <p>Live Players</p>
                                 <h4>{gameStats.livePlayers}</h4>
-                                <p>Avg. Players, 24 hours</p>
+                                <p>Avg. Players, 7 Days</p>
                                 <h4>{gameStats.weekAvg}</h4>
 
                             </div>

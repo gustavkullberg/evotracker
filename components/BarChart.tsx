@@ -5,10 +5,10 @@ import '../styles/Home.module.css';
 import React from 'react';
 
 
-const renderCustomizedLabel = (props) => {
+const renderCustomizedLabel = (props, selectedGameShow) => {
     const { x, y, width, index } = props;
     const radius = 8;
-    return index === 32 ? (
+    return index === 32 && selectedGameShow === "All Shows" ? (
         <g>
             <circle cx={x + width / 2} cy={y - radius} r={radius} fill="#1b2631" />
             <text x={x + width / 2} y={y - radius} fill="#fff" textAnchor="middle" dominantBaseline="middle">
@@ -18,7 +18,7 @@ const renderCustomizedLabel = (props) => {
     ) : undefined;
 };
 
-export const Bars = ({ timeSeries, selectedFilter, isFetchingTimeSeries }): JSX.Element => {
+export const Bars = ({ timeSeries, selectedFilter, isFetchingTimeSeries, selectedGameShow }): JSX.Element => {
     const [focusBar, setFocusBar] = React.useState(null);
 
     const CustomTooltip = ({ active, payload, label }) => {
@@ -82,9 +82,9 @@ export const Bars = ({ timeSeries, selectedFilter, isFetchingTimeSeries }): JSX.
                 <Tooltip viewBox={{ x: 1000, y: 0, width: 800, height: 400 }} content={CustomTooltip} labelFormatter={(time: Date) => `${moment(time).format(selectedFilter.includes("Daily") ? 'ddd Do MMM' : 'HH:mm,  Do MMM')}`} />
                 <Bar stackId="1" type="monotone" dataKey="players" stroke="black" fill="url(#evoblack)" >
                     {timeSeries.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={isSameDayAsMarked(focusBar, index) ? '#1b2631' : "url(#evoblack)"} />
+                        <Cell key={`cell-${index}`} fill={focusBar === index ? '#1b2631' : "url(#evoblack)"} />
                     ))}
-                    <LabelList dataKey="hasMajorDataChange" position="top" content={renderCustomizedLabel} />
+                    <LabelList dataKey="hasMajorDataChange" position="top" content={(c) => renderCustomizedLabel(c, selectedGameShow)} />
                 </Bar>
 
 
@@ -94,14 +94,4 @@ export const Bars = ({ timeSeries, selectedFilter, isFetchingTimeSeries }): JSX.
     ) : <div style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: "100px" }}>
             <p>Loading ..</p>
         </div>))
-}
-
-const isSameDayAsMarked = (focusIndex: number, index: number): boolean => {
-    const focusIndexRest = focusIndex % 7;
-    const indexRest = index % 7;
-    if (focusIndexRest === indexRest) {
-        return true
-    } else {
-        return false
-    }
 }

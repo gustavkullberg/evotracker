@@ -4,7 +4,7 @@ import { StatusCard, Dropdown, LineChart } from "../components";
 import TimeFilter from "../utils/timeFIlter";
 import { Bars } from "../components/BarChart";
 
-const filters = ["1D", "Daily Avg", "Daily Max"];
+const filters = ["1D", "10D", "Daily Avg", "Daily Max"];
 
 export default function Home(): JSX.Element {
   const [selectedGameShow, setGameShow] = useState("All Shows");
@@ -102,7 +102,8 @@ export default function Home(): JSX.Element {
             }
           }).filter(f => f.players)}
             selectedFilter={selectedFilter}
-            isFetchingTimeSeries={isFetchingTimeSeries} />
+            isFetchingTimeSeries={isFetchingTimeSeries}
+            selectedGameShow={selectedGameShow} />
             :
             <LineChart timeSeries={timeSeries.map((j) => {
               return {
