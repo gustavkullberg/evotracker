@@ -108,6 +108,7 @@ handler.get(async (req: NextApiRequestWithDb, res: NextApiResponse<any[]>) => {
 
   const timeFilter: TimeFilter = req.query.timeFilter as TimeFilter
   if (req.query.gameShow) {
+    res.setHeader('Cache-Control', 's-maxage=180')
     if (timeFilter === TimeFilter.DAILY_AVG || timeFilter === TimeFilter.DAILY_MAX) {
       return res.json(await getDailyTimeSeries(timeFilter, req.db))
     }
@@ -116,7 +117,6 @@ handler.get(async (req: NextApiRequestWithDb, res: NextApiResponse<any[]>) => {
   } else {
     res.statusCode = 400;
     res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Cache-Control', 's-maxage=180')
     res.end(JSON.stringify({ status: 'Bad Request' }));
   }
 });

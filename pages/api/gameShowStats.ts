@@ -94,6 +94,7 @@ const getStatsAllGames = async (db: Db): Promise<GameShowStatsResponse> => {
 handler.get(async (req: NextApiRequestWithDb, res: NextApiResponse<GameShowStatsResponse>) => {
   const gameShow = req.query.gameShow as string;
   if (gameShow) {
+    res.setHeader('Cache-Control', 's-maxage=180')
     switch (gameShow) {
       case 'All Shows':
         return res.json(await getStatsAllGames(req.db));
@@ -103,7 +104,6 @@ handler.get(async (req: NextApiRequestWithDb, res: NextApiResponse<GameShowStats
   } else {
     res.statusCode = 400;
     res.setHeader('Content-Type', 'application/json')
-    res.setHeader('Cache-Control', 's-maxage=180')
     res.end(JSON.stringify({ status: 'Bad Request' }));
   }
 });
