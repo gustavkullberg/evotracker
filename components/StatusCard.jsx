@@ -1,5 +1,6 @@
 import styles from '../styles/Home.module.css';
 import React from 'react';
+import { isMobile } from 'react-device-detect';
 /* 
 type GameStats = {
     livePlayers: number;
@@ -19,17 +20,41 @@ type StatusCardInput = {
     setGameShow?: any;
 } */
 
-const defaultNumberOfTopShows = 10;
+const defaultNumberOfTopShows = isMobile ? 5 : 10;
 
 export const StatusCard = ({ selectedGameShow, gameStats, topFiveShows, setGameShow }) => {
     const [nofShowsListed, setNofShowsListed] = React.useState(defaultNumberOfTopShows);
+    const [nofATHShowsListed, setNofATHShowsListed] = React.useState(defaultNumberOfTopShows);
+
+    const aths = gameStats.aths;
     return <div className={styles.statusContiner}>
         <div style={{ display: "flex", flexDirection: "column" }} className={styles.statusCard}>
 
             <div className={styles.statusCardContent} >
 
                 {<div className={styles.statusProp}>
-                    <h4>Top {defaultNumberOfTopShows} shows live</h4>
+                    <h4>Top {nofATHShowsListed} ATH</h4>
+                    {aths && aths.length > 0 && <div className={styles.gameRankingListContainer}>
+                        <div className={styles.gameRankingList}>
+                            {aths.slice(0, nofATHShowsListed).map((show, idx) => <div key={idx} >
+                                <p onClick={() => setGameShow(show.game)}>{idx + 1}. {show.game} | {show.value}</p>
+                            </div>)}
+                        </div>
+
+                        {nofATHShowsListed > defaultNumberOfTopShows && <ion-icon
+                            name={"chevron-up-outline"}
+                            onClick={() => setNofATHShowsListed(nofATHShowsListed - 10)}
+                        />}
+                        {nofATHShowsListed <= topFiveShows.length && <ion-icon
+                            name={"chevron-down-outline"}
+                            onClick={() => setNofATHShowsListed(nofATHShowsListed + 10)}
+                        />
+                        }
+                    </div>}
+                </div>}
+
+                {<div className={styles.statusProp}>
+                    <h4>Top {nofShowsListed} shows live</h4>
                     {topFiveShows && topFiveShows.length > 0 && <div className={styles.gameRankingListContainer}>
                         <div className={styles.gameRankingList}>
                             {topFiveShows.slice(0, nofShowsListed).map((show, idx) => <div key={idx} >

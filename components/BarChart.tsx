@@ -1,9 +1,9 @@
 import { isMobile } from 'react-device-detect';
-import { XAxis, YAxis, Tooltip, Bar, BarChart, ResponsiveContainer, CartesianGrid, Cell, LabelList } from 'recharts';
+import { XAxis, YAxis, Tooltip, Legend, Bar, Line, ComposedChart, ResponsiveContainer, CartesianGrid, Cell, LabelList } from 'recharts';
 import moment from 'moment';
 import '../styles/Home.module.css';
 import React from 'react';
-
+const average = 30;
 
 const renderCustomizedLabel = (props, selectedGameShow) => {
     const { x, y, width, index } = props;
@@ -21,12 +21,18 @@ const renderCustomizedLabel = (props, selectedGameShow) => {
 export const Bars = ({ timeSeries, selectedFilter, isFetchingTimeSeries, selectedGameShow }): JSX.Element => {
     const [focusBar, setFocusBar] = React.useState(null);
 
+    const averages = timeSeries.map((t, idx) => idx < average ?
+        Math.round(timeSeries.slice(0, idx).reduce((acc, obj) => acc + obj.players, 0) / (idx)) :
+        Math.round(timeSeries.slice(idx - average, idx).reduce((acc, obj) => acc + obj.players, 0) / average)
+    )
+    const formattedTimeSeries = timeSeries.map((t, idx) => ({ ...t, avg: averages[idx] }))
     const CustomTooltip = ({ active, payload, label }) => {
         if (active) {
             return (
                 <div className="custom-tooltip" style={{ backgroundColor: "white", margin: "0px", padding: "10px", border: "1px solid rgb(204, 204, 204)" }}>
                     <p className="label">{`${moment(label).format(selectedFilter.includes("Daily") ? 'ddd Do MMM' : 'HH:mm,  Do MMM')} `}</p>
                     <p>{`Players: ${payload[0].value}`} </p>
+                    <p>{`MA${average}: ${payload[0].payload.avg}`} </p>
                     {new Date(label).toISOString().split("T")[0] === "2020-12-14" ?
                         <p style={{ color: "red" }} className="desc">More games tracked</p>
                         : undefined}
@@ -36,10 +42,9 @@ export const Bars = ({ timeSeries, selectedFilter, isFetchingTimeSeries, selecte
         return null;
     };
 
-
-    return ((timeSeries.length > 0 && !isFetchingTimeSeries ? (
+    return ((formattedTimeSeries.length > 0 && !isFetchingTimeSeries ? (
         <ResponsiveContainer width="96%" height={isMobile ? 400 : 450}>
-            <BarChart data={timeSeries} onMouseMove={state => {
+            <ComposedChart data={formattedTimeSeries} onMouseMove={state => {
                 if (state.isTooltipActive) {
                     setFocusBar(state.activeTooltipIndex);
                 } else {
@@ -79,6 +84,11 @@ export const Bars = ({ timeSeries, selectedFilter, isFetchingTimeSeries, selecte
                     </linearGradient>
                 </defs>
 
+                <Legend formatter={(string) => {
+                    if (string === "avg") return `MA${average}`
+                    if (string === "players") return selectedFilter
+                    return string;
+                }} />
                 <Tooltip viewBox={{ x: 1000, y: 0, width: 800, height: 400 }} content={CustomTooltip} labelFormatter={(time: Date) => `${moment(time).format(selectedFilter.includes("Daily") ? 'ddd Do MMM' : 'HH:mm,  Do MMM')}`} />
                 <Bar stackId="1" type="monotone" dataKey="players" stroke="black" fill="url(#evoblack)" >
                     {timeSeries.map((entry, index) => (
@@ -87,9 +97,10 @@ export const Bars = ({ timeSeries, selectedFilter, isFetchingTimeSeries, selecte
                     <LabelList dataKey="hasMajorDataChange" position="top" content={(c) => renderCustomizedLabel(c, selectedGameShow)} />
                 </Bar>
 
+                <Line type="monotone" dataKey="avg" stroke="red" strokeDasharray="4 3" dot={false} activeDot={false} />
 
 
-            </BarChart>
+            </ComposedChart>
         </ResponsiveContainer >
     ) : <div style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: "100px" }}>
             <p>Loading ..</p>

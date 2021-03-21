@@ -16,6 +16,7 @@ type GameShowStatsResponse = {
   weekAvg: number;
   timeStamp: Date;
   ath: number
+  aths?: number[]
 }
 
 const getTimeSeries = async (db: Db) => {
@@ -33,9 +34,8 @@ const getTimeSeries = async (db: Db) => {
   return timeSeriesCache.value;
 };
 
-const getGameInfoByProp = async (prop: string, db: Db) => {
-  const gameInfos = await db.collection("gameInfo").find().toArray();
-  return gameInfos.find(h => h.game === prop)
+const getGameInfos = async (db: Db) => {
+  return await db.collection("gameInfo").find().toArray();
 }
 
 const getStatsByProp = async (prop: string, db: Db) => {
@@ -47,13 +47,15 @@ const getStatsByProp = async (prop: string, db: Db) => {
   const weekAvg = Math.round(
     timeFilteredResult.reduce((total, obj) => total + obj.value, 0) / timeFilteredResult.length
   );
-  const { ath } = await getGameInfoByProp(prop, db);
+  const infos = await getGameInfos(db);
+  const currentGame = infos.find(i => i.game === prop);
 
   return {
     livePlayers: timeFilteredResult[timeFilteredResult.length - 1].value,
     timeStamp: timeFilteredResult[timeFilteredResult.length - 1].timeStamp,
     weekAvg,
-    ath
+    ath: currentGame.ath,
+    aths: infos.map(i => ({ ...i.ath, game: i.game })).sort((a, b) => b.value - a.value).filter(i => i.game !== "All Shows")
   };
 };
 
@@ -81,13 +83,14 @@ const getStatsAllGames = async (db: Db): Promise<GameShowStatsResponse> => {
     (res, obj) => res + obj,
     0
   );
-  const { ath } = await getGameInfoByProp("All Shows", db);
-
+  const infos = await getGameInfos(db);
+  const currentGame = infos.find(i => i.game === "All Shows");
   return {
     livePlayers,
     weekAvg,
     timeStamp: timeFilteredResult[timeFilteredResult.length - 1].timeStamp,
-    ath
+    ath: currentGame.ath,
+    aths: infos.map(i => ({ ...i.ath, game: i.game })).sort((a, b) => b.value - a.value).filter(i => i.game !== "All Shows")
   };
 };
 
