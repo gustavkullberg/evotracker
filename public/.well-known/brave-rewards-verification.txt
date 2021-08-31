@@ -1,0 +1,4 @@
+This is a Brave Rewards publisher verification file.
+
+Domain: evotracker.live
+Token: 64e273a2be8c429fd2c79d7a3ed445304fb13a0757a30670da6561a51574ff3c
