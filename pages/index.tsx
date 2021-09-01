@@ -7,7 +7,7 @@ import { Bars } from "../components/BarChart";
 const filters = ["1D", "10D", "Daily Avg", "Daily Max"];
 
 export default function Home(): JSX.Element {
-  const [selectedGameShow, setGameShow] = useState("All Shows");
+  const [selectedGameShow, setGameShow] = useState("Crazy Time");
   const [gameStats, setGameStats] = useState({ livePlayers: 0, weekAvg: 0, timeStamp: null });
   const [selectedFilter, setFilter] = useState("1D");
   const [timeSeries, setTimeSeries] = useState([]);
@@ -59,6 +59,7 @@ export default function Home(): JSX.Element {
 
   const extractGameShowList = () => {
     const games = timeSeries && timeSeries.length > 0 && Object.keys(timeSeries[timeSeries.length - 1].value);
+    return games;
     if (games && games.includes("All Shows")) {
       return games;
     } else if (games) {
