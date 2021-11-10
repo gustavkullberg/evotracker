@@ -5,10 +5,7 @@ import type { NextApiRequestWithDb } from "../../utils/NextRequestWithDbType"
 import { Db } from 'mongodb';
 import TimeFilter from '../../utils/timeFIlter';
 import { isNDaysAgo } from '../../utils/isNDaysAgo';
-
-
-const collectionName = 'evostats';
-const dailyAverageCollection = "dailyHistoryEvoStats"
+import axios from "axios";
 
 type TimeSeriesEntry = {
   timeStamp: Date
@@ -56,11 +53,17 @@ const getDailyTimeSeries = async (timeFilter: TimeFilter, db: Db): Promise<any[]
   if (dailyTimeSeriesCache.expiryTimestamp && dailyTimeSeriesCache.expiryTimestamp.valueOf() > Date.now()) {
     arr = dailyTimeSeriesCache.value;
   } else {
-    arr = await db.collection(dailyAverageCollection).find().sort({ date: 1 }).toArray();
-    const now = new Date();
-    const expiryTimestamp = new Date(now.getTime() + 1000 * 60 * 5);
-    dailyTimeSeriesCache.expiryTimestamp = expiryTimestamp;
-    dailyTimeSeriesCache.value = arr;
+    try {
+      const { data } = await axios.get(`${process.env.DO_BASE_URL}timeseries/daily`);
+      arr = data;
+      const now = new Date();
+      const expiryTimestamp = new Date(now.getTime() + 1000 * 60 * 5);
+      dailyTimeSeriesCache.expiryTimestamp = expiryTimestamp;
+      dailyTimeSeriesCache.value = arr;
+
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   if (timeFilter === TimeFilter.DAILY_AVG) {
@@ -78,13 +81,13 @@ const getDailyTimeSeries = async (timeFilter: TimeFilter, db: Db): Promise<any[]
 }
 
 const getTimeSeries = async (db: Db): Promise<TimeSeriesEntry[]> => {
-
   if (timeSeriesCache.expiryTimestamp && timeSeriesCache.expiryTimestamp.valueOf() > Date.now()) {
     return timeSeriesCache.value;
   }
+
   const now = new Date();
-  const dateSevenDaysAgo = new Date(now.getTime() - 1000 * 60 * 60 * 24 * 10).toISOString();
-  const arr = await db.collection(collectionName).find({ "timeStamp": { $gt: dateSevenDaysAgo } }).toArray();
+  const { data } = await axios.get(`${process.env.DO_BASE_URL}timeseries/minutes`);
+  const arr = data;
   const expiryTimestamp = new Date(now.getTime() + 1000 * 60 * 5);
   timeSeriesCache.expiryTimestamp = expiryTimestamp;
 

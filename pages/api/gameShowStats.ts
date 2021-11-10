@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { Db } from 'mongodb';
 import { NextApiResponse } from 'next';
 import nextConnect from 'next-connect';
@@ -6,7 +7,6 @@ import { NextApiRequestWithDb } from '../../utils/NextRequestWithDbType';
 import TimeFilter from '../../utils/timeFIlter';
 import { timeSeriesCache, filterByTime } from './gameShowHistory';
 
-const collectionName = 'evostats';
 
 const handler = nextConnect();
 handler.use(middleware);
@@ -25,8 +25,8 @@ const getTimeSeries = async (db: Db) => {
   }
 
   const now = new Date();
-  const dateSevenDaysAgo = new Date(now.getTime() - 1000 * 60 * 60 * 24 * 10).toISOString();
-  const arr = await db.collection(collectionName).find({ "timeStamp": { $gt: dateSevenDaysAgo } }).toArray();
+  const { data } = await axios.get(`${process.env.DO_BASE_URL}timeseries/minutes`);
+  const arr = data;
   const expiryTimestamp = new Date(now.getTime() + 1000 * 60 * 5);
   timeSeriesCache.expiryTimestamp = expiryTimestamp;
 
@@ -35,7 +35,8 @@ const getTimeSeries = async (db: Db) => {
 };
 
 const getGameInfos = async (db: Db) => {
-  return await db.collection("gameInfo").find().toArray();
+  const { data } = await axios.get(`${process.env.DO_BASE_URL}gameinfos`);
+  return data;
 }
 
 const getStatsByProp = async (prop: string, db: Db) => {
