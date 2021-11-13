@@ -60,13 +60,6 @@ export default function Home(): JSX.Element {
   const extractGameShowList = () => {
     const games = timeSeries && timeSeries.length > 0 && Object.keys(timeSeries[timeSeries.length - 1].value);
     return games;
-    if (games && games.includes("All Shows")) {
-      return games;
-    } else if (games) {
-      return ["All Shows", ...games]
-    } else {
-      return ["All Shows"]
-    }
   }
 
   return (

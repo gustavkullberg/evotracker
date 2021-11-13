@@ -2,8 +2,8 @@ import nextConnect from 'next-connect';
 import type { NextApiResponse } from 'next'
 import type { NextApiRequestWithDb } from "../../utils/NextRequestWithDbType"
 import TimeFilter from '../../utils/timeFIlter';
-import { isNDaysAgo } from '../../utils/isNDaysAgo';
 import axios from "axios";
+import { getStartDateFromTimeFilter } from '../../utils/getStartDateFromTimeFilter';
 
 type TimeSeriesEntry = {
   timeStamp: Date
@@ -15,23 +15,7 @@ type TimeSeriesEntry = {
     'Dream Catcher': number
   }
 }
-
-
 const handler = nextConnect();
-
-export const filterByTime = (a: any, timeFilter: TimeFilter): boolean => {
-  if (timeFilter === '1D') {
-    return isNDaysAgo(a.timeStamp, 1);
-  }
-  else if (timeFilter === "7D") {
-    return isNDaysAgo(a.timeStamp, 7);
-  }
-  else if (timeFilter === '10D') {
-    return isNDaysAgo(a.timeStamp, 10);
-  } else {
-    return true;
-  }
-};
 
 export const timeSeriesCache = {
   expiryTimestamp: null as Date,
@@ -43,24 +27,17 @@ export const dailyTimeSeriesCache = {
   value: null
 }
 
-
-
 const getDailyTimeSeries = async (timeFilter: TimeFilter): Promise<any[]> => {
   let arr;
   if (dailyTimeSeriesCache.expiryTimestamp && dailyTimeSeriesCache.expiryTimestamp.valueOf() > Date.now()) {
     arr = dailyTimeSeriesCache.value;
   } else {
-    try {
-      const { data } = await axios.get(`${process.env.DO_BASE_URL}timeseries/daily`);
-      arr = data;
-      const now = new Date();
-      const expiryTimestamp = new Date(now.getTime() + 1000 * 60 * 5);
-      dailyTimeSeriesCache.expiryTimestamp = expiryTimestamp;
-      dailyTimeSeriesCache.value = arr;
-
-    } catch (e) {
-      console.log(e);
-    }
+    const { data } = await axios.get(`${process.env.DO_BASE_URL}timeseries/daily`);
+    arr = data;
+    const now = new Date();
+    const expiryTimestamp = new Date(now.getTime() + 1000 * 60 * 5);
+    dailyTimeSeriesCache.expiryTimestamp = expiryTimestamp;
+    dailyTimeSeriesCache.value = arr;
   }
 
   if (timeFilter === TimeFilter.DAILY_AVG) {
@@ -77,29 +54,20 @@ const getDailyTimeSeries = async (timeFilter: TimeFilter): Promise<any[]> => {
   return arr
 }
 
-const getTimeSeries = async (): Promise<TimeSeriesEntry[]> => {
-  if (timeSeriesCache.expiryTimestamp && timeSeriesCache.expiryTimestamp.valueOf() > Date.now()) {
-    return timeSeriesCache.value;
-  }
-  const now = new Date();
-  const { data } = await axios.get(`${process.env.DO_BASE_URL}timeseries/minutes`);
-  const arr = data;
-  const expiryTimestamp = new Date(now.getTime() + 1000 * 60 * 5);
-  timeSeriesCache.expiryTimestamp = expiryTimestamp;
-
-  timeSeriesCache.value = arr;
-  return timeSeriesCache.value;
+export const getTimeSeries = async (startDate: Date): Promise<TimeSeriesEntry[]> => {
+  const { data } = await axios.get(`${process.env.DO_BASE_URL}timeseries/minutes?startDate=${startDate}`);
+  return data;
 };
 
 const getAllTimeSeries = async (timeFilter) => {
-  const timeFilteredResult = (await getTimeSeries())
+  const startDate = getStartDateFromTimeFilter(timeFilter);
+  const timeFilteredResult = (await getTimeSeries(startDate))
     .map(ts => {
       return {
         timeStamp: ts.timeStamp,
         value: ts.entry,
       };
     })
-    .filter(arr => filterByTime(arr, timeFilter));
   return timeFilteredResult;
 };
 

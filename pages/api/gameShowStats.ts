@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { NextApiResponse } from 'next';
 import nextConnect from 'next-connect';
+import { getStartDateFromTimeFilter } from '../../utils/getStartDateFromTimeFilter';
 import { NextApiRequestWithDb } from '../../utils/NextRequestWithDbType';
-import TimeFilter from '../../utils/timeFIlter';
-import { timeSeriesCache, filterByTime } from './gameShowHistory';
+import { getTimeSeries } from './gameShowHistory';
 
 
 const handler = nextConnect();
@@ -16,27 +16,11 @@ type GameShowStatsResponse = {
   aths?: number[]
 }
 
-const getTimeSeries = async () => {
-  if (timeSeriesCache.expiryTimestamp && timeSeriesCache.expiryTimestamp.valueOf() > Date.now()) {
-    return timeSeriesCache.value;
-  }
 
-  const now = new Date();
-  const { data } = await axios.get(`${process.env.DO_BASE_URL}timeseries/minutes`);
-  const arr = data;
-  const expiryTimestamp = new Date(now.getTime() + 1000 * 60 * 5);
-  timeSeriesCache.expiryTimestamp = expiryTimestamp;
-
-  timeSeriesCache.value = arr;
-  return timeSeriesCache.value;
-};
-
-
-const getTimeSeriesForGame = async (game: string) => {
-  const { data } = await axios.get(`${process.env.DO_BASE_URL}games/${game}/timeseries/minutes`);
+const getTimeSeriesForGame = async (game: string, startDate) => {
+  const { data } = await axios.get(`${process.env.DO_BASE_URL}games/${game}/timeseries/minutes?startDate=${startDate}`);
   return data;
 };
-
 
 const getGameInfos = async () => {
   const { data } = await axios.get(`${process.env.DO_BASE_URL}gameinfos`);
@@ -44,8 +28,8 @@ const getGameInfos = async () => {
 }
 
 const getStatsByProp = async (prop: string) => {
-  const timeFilteredResult = (await getTimeSeriesForGame(prop))
-    .filter(arr => filterByTime(arr, TimeFilter["7D"]))
+  const startDate = getStartDateFromTimeFilter("7D");
+  const timeFilteredResult = (await getTimeSeriesForGame(prop, startDate))
     .filter(a => a.value);
 
   const weekAvg = Math.round(
@@ -64,14 +48,14 @@ const getStatsByProp = async (prop: string) => {
 };
 
 const getStatsAllGames = async (): Promise<GameShowStatsResponse> => {
-  const timeFilteredResult = (await getTimeSeries())
+  const startDate = getStartDateFromTimeFilter("7D");
+  const timeFilteredResult = (await getTimeSeries(startDate))
     .map(ts => {
       return {
         timeStamp: ts.timeStamp,
         value: ts.entry,
       };
-    })
-    .filter(arr => filterByTime(arr, TimeFilter["7D"]));
+    });
 
   const weekAvg = Math.round(
     timeFilteredResult.reduce((total, obj) => {
