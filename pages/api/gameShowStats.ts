@@ -1,15 +1,12 @@
 import axios from 'axios';
-import { Db } from 'mongodb';
 import { NextApiResponse } from 'next';
 import nextConnect from 'next-connect';
-import middleware from '../../middleware/db';
 import { NextApiRequestWithDb } from '../../utils/NextRequestWithDbType';
 import TimeFilter from '../../utils/timeFIlter';
 import { timeSeriesCache, filterByTime } from './gameShowHistory';
 
 
 const handler = nextConnect();
-handler.use(middleware);
 
 type GameShowStatsResponse = {
   livePlayers: number;
@@ -19,7 +16,7 @@ type GameShowStatsResponse = {
   aths?: number[]
 }
 
-const getTimeSeries = async (db: Db) => {
+const getTimeSeries = async () => {
   if (timeSeriesCache.expiryTimestamp && timeSeriesCache.expiryTimestamp.valueOf() > Date.now()) {
     return timeSeriesCache.value;
   }
@@ -34,21 +31,27 @@ const getTimeSeries = async (db: Db) => {
   return timeSeriesCache.value;
 };
 
-const getGameInfos = async (db: Db) => {
+
+const getTimeSeriesForGame = async (game: string) => {
+  const { data } = await axios.get(`${process.env.DO_BASE_URL}games/${game}/timeseries/minutes`);
+  return data;
+};
+
+
+const getGameInfos = async () => {
   const { data } = await axios.get(`${process.env.DO_BASE_URL}gameinfos`);
   return data;
 }
 
-const getStatsByProp = async (prop: string, db: Db) => {
-  const timeFilteredResult = (await getTimeSeries(db))
-    .map(a => ({ timeStamp: a.timeStamp, value: a.entry[prop] }))
+const getStatsByProp = async (prop: string) => {
+  const timeFilteredResult = (await getTimeSeriesForGame(prop))
     .filter(arr => filterByTime(arr, TimeFilter["7D"]))
     .filter(a => a.value);
 
   const weekAvg = Math.round(
     timeFilteredResult.reduce((total, obj) => total + obj.value, 0) / timeFilteredResult.length
   );
-  const infos = await getGameInfos(db);
+  const infos = await getGameInfos();
   const currentGame = infos.find(i => i.game === prop);
 
   return {
@@ -60,8 +63,8 @@ const getStatsByProp = async (prop: string, db: Db) => {
   };
 };
 
-const getStatsAllGames = async (db: Db): Promise<GameShowStatsResponse> => {
-  const timeFilteredResult = (await getTimeSeries(db))
+const getStatsAllGames = async (): Promise<GameShowStatsResponse> => {
+  const timeFilteredResult = (await getTimeSeries())
     .map(ts => {
       return {
         timeStamp: ts.timeStamp,
@@ -84,7 +87,7 @@ const getStatsAllGames = async (db: Db): Promise<GameShowStatsResponse> => {
     (res, obj) => res + obj,
     0
   );
-  const infos = await getGameInfos(db);
+  const infos = await getGameInfos();
   const currentGame = infos.find(i => i.game === "All Shows");
   return {
     livePlayers,
@@ -101,9 +104,9 @@ handler.get(async (req: NextApiRequestWithDb, res: NextApiResponse<GameShowStats
     res.setHeader('Cache-Control', 's-maxage=180')
     switch (gameShow) {
       case 'All Shows':
-        return res.json(await getStatsAllGames(req.db));
+        return res.json(await getStatsAllGames());
       default:
-        return res.json(await getStatsByProp(gameShow, req.db))
+        return res.json(await getStatsByProp(gameShow))
     }
   } else {
     res.statusCode = 400;

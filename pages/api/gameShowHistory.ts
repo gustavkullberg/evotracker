@@ -1,8 +1,6 @@
 import nextConnect from 'next-connect';
-import middleware from '../../middleware/db';
 import type { NextApiResponse } from 'next'
 import type { NextApiRequestWithDb } from "../../utils/NextRequestWithDbType"
-import { Db } from 'mongodb';
 import TimeFilter from '../../utils/timeFIlter';
 import { isNDaysAgo } from '../../utils/isNDaysAgo';
 import axios from "axios";
@@ -20,7 +18,6 @@ type TimeSeriesEntry = {
 
 
 const handler = nextConnect();
-handler.use(middleware);
 
 export const filterByTime = (a: any, timeFilter: TimeFilter): boolean => {
   if (timeFilter === '1D') {
@@ -48,7 +45,7 @@ export const dailyTimeSeriesCache = {
 
 
 
-const getDailyTimeSeries = async (timeFilter: TimeFilter, db: Db): Promise<any[]> => {
+const getDailyTimeSeries = async (timeFilter: TimeFilter): Promise<any[]> => {
   let arr;
   if (dailyTimeSeriesCache.expiryTimestamp && dailyTimeSeriesCache.expiryTimestamp.valueOf() > Date.now()) {
     arr = dailyTimeSeriesCache.value;
@@ -80,11 +77,10 @@ const getDailyTimeSeries = async (timeFilter: TimeFilter, db: Db): Promise<any[]
   return arr
 }
 
-const getTimeSeries = async (db: Db): Promise<TimeSeriesEntry[]> => {
+const getTimeSeries = async (): Promise<TimeSeriesEntry[]> => {
   if (timeSeriesCache.expiryTimestamp && timeSeriesCache.expiryTimestamp.valueOf() > Date.now()) {
     return timeSeriesCache.value;
   }
-
   const now = new Date();
   const { data } = await axios.get(`${process.env.DO_BASE_URL}timeseries/minutes`);
   const arr = data;
@@ -95,8 +91,8 @@ const getTimeSeries = async (db: Db): Promise<TimeSeriesEntry[]> => {
   return timeSeriesCache.value;
 };
 
-const getAllTimeSeries = async (timeFilter, db) => {
-  const timeFilteredResult = (await getTimeSeries(db))
+const getAllTimeSeries = async (timeFilter) => {
+  const timeFilteredResult = (await getTimeSeries())
     .map(ts => {
       return {
         timeStamp: ts.timeStamp,
@@ -113,9 +109,9 @@ handler.get(async (req: NextApiRequestWithDb, res: NextApiResponse<any[]>) => {
   if (req.query.gameShow) {
     res.setHeader('Cache-Control', 's-maxage=180')
     if (timeFilter === TimeFilter.DAILY_AVG || timeFilter === TimeFilter.DAILY_MAX) {
-      return res.json(await getDailyTimeSeries(timeFilter, req.db))
+      return res.json(await getDailyTimeSeries(timeFilter))
     }
-    return res.json(await getAllTimeSeries(timeFilter, req.db));
+    return res.json(await getAllTimeSeries(timeFilter));
 
   } else {
     res.statusCode = 400;
