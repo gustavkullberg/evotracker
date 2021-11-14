@@ -1,6 +1,9 @@
 import axios from 'axios';
 import { NextApiResponse } from 'next';
 import nextConnect from 'next-connect';
+import { cors } from '../../middleware/cors';
+import { checkReferer } from '../../middleware/referer';
+import { runMiddleware } from '../../middleware/runMiddleware';
 import { getStartDateFromTimeFilter } from '../../utils/getStartDateFromTimeFilter';
 import { NextApiRequestWithDb } from '../../utils/NextRequestWithDbType';
 import { getTimeSeries } from './gameShowHistory';
@@ -84,6 +87,10 @@ const getStatsAllGames = async (): Promise<GameShowStatsResponse> => {
 
 handler.get(async (req: NextApiRequestWithDb, res: NextApiResponse<GameShowStatsResponse>) => {
   const gameShow = req.query.gameShow as string;
+
+  await runMiddleware(req, res, cors)
+  checkReferer(req);
+
   if (gameShow) {
     res.setHeader('Cache-Control', 's-maxage=180')
     switch (gameShow) {
