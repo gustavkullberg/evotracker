@@ -10,51 +10,26 @@ import { checkReferer } from '../../middleware/referer';
 
 type TimeSeriesEntry = {
   timeStamp: Date
-  entry: {
-    'Crazy Time': number,
-    'Lightning Roulette': number,
-    'MONOPOLY Live': number,
-    'Mega Ball': number,
-    'Dream Catcher': number
-  }
+  entry: Record<string, number>
 }
 const handler = nextConnect();
 
-export const timeSeriesCache = {
-  expiryTimestamp: null as Date,
-  value: null as TimeSeriesEntry[]
-};
-
-export const dailyTimeSeriesCache = {
-  expiryTimestamp: null as Date,
-  value: null
-}
-
 const getDailyTimeSeries = async (timeFilter: TimeFilter): Promise<any[]> => {
-  let arr;
-  if (dailyTimeSeriesCache.expiryTimestamp && dailyTimeSeriesCache.expiryTimestamp.valueOf() > Date.now()) {
-    arr = dailyTimeSeriesCache.value;
-  } else {
-    const { data } = await axios.get(`${process.env.DO_BASE_URL}timeseries/daily`);
-    arr = data;
-    const now = new Date();
-    const expiryTimestamp = new Date(now.getTime() + 1000 * 60 * 5);
-    dailyTimeSeriesCache.expiryTimestamp = expiryTimestamp;
-    dailyTimeSeriesCache.value = arr;
-  }
+  const { data } = await axios.get(`${process.env.DO_BASE_URL}timeseries/daily`);
 
   if (timeFilter === TimeFilter.DAILY_AVG) {
-    return arr.map(m => ({
+    return data.map(m => ({
       timeStamp: m.date,
       value: m.dailyAverages
     }))
   } else if (timeFilter === TimeFilter.DAILY_MAX) {
-    return arr.map(m => ({
+    return data.map(m => ({
       timeStamp: m.date,
       value: m.dailyMaxes
     }))
   }
-  return arr
+
+  return data
 }
 
 export const getTimeSeries = async (startDate: Date): Promise<TimeSeriesEntry[]> => {
