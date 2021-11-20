@@ -20,6 +20,7 @@ const App = ({ Component, pageProps }) => {
           content="Track activity on games created by Evolution Gaming Group"
         />
         <script type="module" src="https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.esm.js"></script>
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7023613646801443" crossOrigin="anonymous"></script>
         <link
           rel="apple-touch-icon"
           sizes="180x180"
