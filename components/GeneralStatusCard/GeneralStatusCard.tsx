@@ -7,8 +7,10 @@ export const GeneralStatusCard = ({ stats, setGameShow }) => {
     const [nofShowsListed, setNofShowsListed] = React.useState(defaultNumberOfTopShows);
     const [nofATHShowsListed, setNofATHShowsListed] = React.useState(defaultNumberOfTopShows);
     const [nofTrendersListed, setNofTrendersListed] = React.useState(defaultNumberOfTopShows);
+    const [nofWeeklyTrendersListed, setNofWeeklyTrendersListed] = React.useState(defaultNumberOfTopShows);
 
-    const { aths, topLive, highestMonthlyRelative } = stats;
+
+    const { aths, topLive, highestMonthlyRelative, highestWeeklyRelative } = stats;
 
     return <div className={styles.statusContiner}>
         <div style={{ display: "flex", flexDirection: "column" }} className={styles.statusCard}>
@@ -50,6 +52,30 @@ export const GeneralStatusCard = ({ stats, setGameShow }) => {
                         {nofATHShowsListed <= topLive.length && <ion-icon
                             name={"chevron-down-outline"}
                             onClick={() => setNofATHShowsListed(nofATHShowsListed + 10)}
+                        />
+                        }
+                    </div>}
+                </div>}
+
+                {<div className={styles.statusProp}>
+                    <h4>Weekly gainers</h4>
+                    {highestWeeklyRelative && highestWeeklyRelative.length > 0 && <div className={styles.gameRankingListContainer}>
+                        <div className={styles.gameRankingList}>
+                            {highestWeeklyRelative.slice(0, nofWeeklyTrendersListed).map((show, idx) => <div key={idx} >
+                                <div style={{ display: "flex" }}>
+                                    <p onClick={() => setGameShow(show.game)}>{idx + 1}. {show.game} |</p>
+                                    <p style={{ color: `${show.value > 1 ? "green" : "red"}` }}>
+                                        &nbsp;{Math.floor((show.value - 1) * 100)}%</p>
+                                </div>
+                            </div>)}
+                        </div>
+                        {nofWeeklyTrendersListed > defaultNumberOfTopShows && <ion-icon
+                            name={"chevron-up-outline"}
+                            onClick={() => setNofWeeklyTrendersListed(nofWeeklyTrendersListed - 10)}
+                        />}
+                        {nofWeeklyTrendersListed <= highestWeeklyRelative.length && <ion-icon
+                            name={"chevron-down-outline"}
+                            onClick={() => setNofWeeklyTrendersListed(nofWeeklyTrendersListed + 10)}
                         />
                         }
                     </div>}

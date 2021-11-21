@@ -20,12 +20,14 @@ const fetchStats = async () => {
 }
 
 const getStats = async () => {
-  const generalStats = await fetchStats();
+  const { topLive, athList, highestMonthlyRelative, highestWeeklyRelative, highestQuarterlyRelative } = await fetchStats();
 
   return {
-    topLive: generalStats.topLive,
-    aths: generalStats.athList,
-    highestMonthlyRelative: generalStats.highestMonthlyRelative
+    topLive,
+    aths: athList,
+    highestMonthlyRelative,
+    highestWeeklyRelative,
+    highestQuarterlyRelative
   };
 };
 
