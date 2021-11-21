@@ -1,0 +1,34 @@
+.gameRankingListContainer {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.gameRankingList {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.gameRankingList p {
+  font-size: 0.6rem;
+  justify-content: baseline;
+  cursor: pointer;
+}
+
+.gameStatusRow {
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+  margin-bottom: 10px;
+}
+
+.gameStatusRowElement {
+  margin-left: 10px;
+}
+
+@media (max-width: 800px) {
+  .gameStatusRow {
+    margin-bottom: 20px;
+  }
+}

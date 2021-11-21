@@ -6,7 +6,6 @@ import axios from "axios";
 import { getStartDateFromTimeFilter } from '../../utils/getStartDateFromTimeFilter';
 import { runMiddleware } from '../../middleware/runMiddleware';
 import { cors } from '../../middleware/cors';
-import { checkReferer } from '../../middleware/referer';
 
 type TimeSeriesEntry = {
   timeStamp: Date
@@ -52,7 +51,6 @@ const getAllTimeSeries = async (timeFilter) => {
 handler.get(async (req: NextApiRequestWithDb, res: NextApiResponse<any[]>) => {
   const timeFilter: TimeFilter = req.query.timeFilter as TimeFilter
   await runMiddleware(req, res, cors)
-  checkReferer(req);
 
   if (req.query.gameShow) {
     res.setHeader('Cache-Control', 's-maxage=180')

@@ -12,18 +12,19 @@
 
 .card {
   background-color: white;
-  margin-top: 50px;
+  margin-top: 10px;
   margin-bottom: 50px;
   box-shadow: rgba(0, 0, 0, 0.5) 7px 7px 10px 0px;
   flex-basis: 45%;
   padding-bottom: 1.5rem;
-  padding-top: 1.5rem;
+  padding-top: 1rem;
   text-align: left;
   text-decoration: none;
   border: 1px solid #eaeaea;
   border-radius: 1px;
   transition: color 0.15s ease, border-color 0.15s ease;
-  width: 85%;
+  width: 97%;
+  display: flex;
 }
 
 .card h3 {
@@ -104,23 +105,6 @@
   font-size: 0.6rem;
 }
 
-.gameRankingListContainer {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-}
-
-.gameRankingList {
-  display: flex;
-  flex-direction: column;
-}
-
-.gameRankingList p {
-  font-size: 0.6rem;
-  justify-content: baseline;
-  cursor: pointer;
-}
-
 .spinner {
   animation: rotation 1s infinite linear;
   margin-top: 20px;
@@ -148,6 +132,7 @@
     width: 100%;
     margin-top: 0px;
     padding-bottom: 40px;
+    flex-direction: column;
   }
 
   .container {

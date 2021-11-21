@@ -1,5 +1,6 @@
 import styles from "./header.module.css";
 import Link from "next/link";
+import React from "react";
 
 export const Header = () => (
   <header className={styles.header}>
