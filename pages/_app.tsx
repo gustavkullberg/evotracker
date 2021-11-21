@@ -3,6 +3,7 @@ import "../styles/globals.css";
 import TagManager from "react-gtm-module";
 import { useEffect } from "react";
 import { Header, Footer } from "../components";
+import Script from "next/script";
 
 const App = ({ Component, pageProps }) => {
   useEffect(() => {
@@ -19,8 +20,8 @@ const App = ({ Component, pageProps }) => {
           name="description"
           content="Track activity on games created by Evolution Gaming Group"
         />
-        <script type="module" src="https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.esm.js"></script>
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7023613646801443" crossOrigin="anonymous"></script>
+        <Script type="module" src="https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.esm.js"></Script>
+        <Script strategy="beforeInteractive" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7023613646801443" crossOrigin="anonymous"></Script>
         <link
           rel="apple-touch-icon"
           sizes="180x180"
