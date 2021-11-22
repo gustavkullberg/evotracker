@@ -1,14 +1,4 @@
-.container {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-family: "Aldrich", sans-serif;
-  background: linear-gradient(165.88deg, #1b2631 1.4%, white 104.08%);
-  width: 100%;
-}
-
-.statusContiner {
+.statusContainer {
   display: flex;
   justify-content: center;
 }
@@ -16,7 +6,7 @@
 .statusCard {
   display: flex;
   align-items: center;
-  flex-direction: row;
+  flex-direction: column;
   width: 95%;
   background-color: #1b2631;
   color: white;
@@ -30,49 +20,8 @@
   font-size: 1.7rem;
 }
 
-.statusProp {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  padding-top: 25px;
-}
-
-.statusCardContent {
-  display: flex;
-  width: 100%;
-  justify-content: space-around;
-  flex-direction: column;
-}
-
 .statusCard p {
   font-size: 0.8rem;
-}
-
-.statusProp p {
-  font-size: 0.6rem;
-}
-
-.gameRankingListContainer {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-}
-
-.gameRankingList {
-  display: flex;
-  flex-direction: column;
-}
-
-.gameRankingList p {
-  font-size: 0.6rem;
-  justify-content: baseline;
-  cursor: pointer;
-}
-
-@media (max-width: 800px) {
-  .container {
-    padding: 0 00rem;
-  }
 }
 
 @media (min-width: 800px) {
@@ -83,7 +32,7 @@
 }
 
 @media (min-width: 1200px) {
-  .statusContiner {
+  .statusContainer {
     margin-right: 5px;
   }
 }

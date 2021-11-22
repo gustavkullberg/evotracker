@@ -1,0 +1,23 @@
+.statusProp {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding-top: 25px;
+}
+
+.gameRankingListContainer {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.gameRankingList {
+  display: flex;
+  flex-direction: column;
+}
+
+.gameRankingList p {
+  font-size: 0.6rem;
+  justify-content: baseline;
+  cursor: pointer;
+}
