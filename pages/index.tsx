@@ -4,12 +4,13 @@ import { StatusCard, Dropdown, LineChart } from "../components";
 import TimeFilter from "../utils/timeFIlter";
 import { Bars } from "../components/BarChart";
 import { GeneralStatusCard } from "../components/GeneralStatusCard/GeneralStatusCard";
+import { WeekChart } from "../components/WeekChart/WeekChart";
 
 const filters = ["1D", "10D", "Daily Avg", "Daily Max"];
 
 export default function Home(): JSX.Element {
   const [selectedGameShow, setGameShow] = useState("Crazy Time");
-  const [gameStats, setGameStats] = useState({ ath: 1, livePlayers: 1, ma30: 1, dotWStats: 1, isLoaded: false });
+  const [gameStats, setGameStats] = useState({ ath: 1, livePlayers: 1, ma30: 1, dotWStats: [], isLoaded: false });
   const [stats, setStats] = useState({ highestMonthlyRelative: [], topLive: [], aths: [] });
   const [selectedFilter, setFilter] = useState("1D");
   const [timeSeries, setTimeSeries] = useState([]);
@@ -116,6 +117,7 @@ export default function Home(): JSX.Element {
               />
           }
         </div>
+        <WeekChart data={gameStats.dotWStats} />
       </div>
       <GeneralStatusCard setGameShow={setShowClick} stats={stats} />
     </div>

@@ -14,7 +14,7 @@ const fetchStats = async (game) => {
 }
 
 const getStats = async (game: string) => {
-    const { ath, livePlayers, ma7, ma30, ma90, rank } = await fetchStats(game);
+    const { ath, livePlayers, ma7, ma30, ma90, rank, dotWStats } = await fetchStats(game);
     return {
         ath: ath.value,
         athDate: ath.timeStamp,
@@ -26,7 +26,8 @@ const getStats = async (game: string) => {
         ma30Delta: ma30.delta,
         ma90: ma90.value,
         ma90Delta: ma90.delta,
-        rank: rank
+        rank: rank,
+        dotWStats
     };
 };
 

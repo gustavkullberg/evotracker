@@ -22,7 +22,6 @@ export const LineChart = ({ timeSeries, selectedFilter, isFetchingTimeSeries }) 
                     }}
                     type="number"
                     scale="time"
-                    interval={selectedFilter === "10D" && Math.floor(timeSeries.length / (isMobile ? 7 : 10))}
                 />
                 <CartesianGrid stroke="#2c3e50" vertical={false} strokeDasharray="6 6" />
                 <YAxis
@@ -46,6 +45,6 @@ export const LineChart = ({ timeSeries, selectedFilter, isFetchingTimeSeries }) 
             </AreaChart>
         </ResponsiveContainer >
     ) : <div style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: "100px" }}>
-            <p>Loading ..</p>
-        </div>))
+        <p>Loading ..</p>
+    </div>))
 }
