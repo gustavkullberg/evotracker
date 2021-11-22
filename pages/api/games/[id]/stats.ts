@@ -9,7 +9,7 @@ import { NextApiRequestWithDb } from '../../../../utils/NextRequestWithDbType';
 const handler = nextConnect();
 
 const fetchStats = async (game) => {
-    const { data } = await axios.get(`${process.env.DO_BASE_URL}games/${game}/stats`);
+    const { data } = await axios.get(`${process.env.DO_BASE_URL}games/${encodeURIComponent(game)}/stats`);
     return data;
 }
 

@@ -29,12 +29,11 @@ export const GameList = ({ gameList, setGameShow, maxNbr, title, isPercentageVal
                 name={"chevron-up-outline"}
                 onClick={() => setNumberListed(numberListed - 10)}
             />}
-            {numberListed <= maxNbr.length && <ion-icon
+            {numberListed <= maxNbr && <ion-icon
                 name={"chevron-down-outline"}
                 onClick={() => setNumberListed(numberListed + 10)}
             />
             }
         </div>}
     </div>
-
 }
