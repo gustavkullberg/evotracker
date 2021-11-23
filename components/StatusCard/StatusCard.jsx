@@ -8,7 +8,7 @@ export const StatusCard = ({ selectedGameShow, gameStats }) => {
             <div className={styles.statusCardContent} >
                 <div className={mStyles.gameRankingList}>
                     <div className={styles.statusProp}>
-                        <h1>{selectedGameShow}</h1>
+                        <h1>{gameStats.game}</h1>
                         <div className={mStyles.gameStatusRow}  >
                             <div className={mStyles.gameStatusRowElement} >
                                 <p>Live Players</p>

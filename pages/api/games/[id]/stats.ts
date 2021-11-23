@@ -27,7 +27,8 @@ const getStats = async (game: string) => {
         ma90: ma90.value,
         ma90Delta: ma90.delta,
         rank: rank,
-        dotWStats
+        dotWStats,
+        game
     };
 };
 

@@ -7,10 +7,11 @@ import { GeneralStatusCard } from "../components/GeneralStatusCard/GeneralStatus
 import { WeekChart } from "../components/WeekChart/WeekChart";
 
 const filters = ["1D", "10D", "Daily Avg", "Daily Max"];
+const defaultGame = "Crazy Time"
 
 export default function Home(): JSX.Element {
-  const [selectedGameShow, setGameShow] = useState("Crazy Time");
-  const [gameStats, setGameStats] = useState({ ath: 1, livePlayers: 1, ma30: 1, dotWStats: [], isLoaded: false });
+  const [selectedGameShow, setGameShow] = useState(defaultGame);
+  const [gameStats, setGameStats] = useState({ ath: 1, livePlayers: 1, ma30: 1, dotWStats: [], dotMStats: [], isLoaded: false, game: defaultGame });
   const [stats, setStats] = useState({ highestMonthlyRelative: [], topLive: [], aths: [] });
   const [selectedFilter, setFilter] = useState("1D");
   const [timeSeries, setTimeSeries] = useState([]);
@@ -117,7 +118,7 @@ export default function Home(): JSX.Element {
               />
           }
         </div>
-        <WeekChart data={gameStats.dotWStats} />
+        <WeekChart data={gameStats.dotWStats} game={gameStats.game} />
       </div>
       <GeneralStatusCard setGameShow={setShowClick} stats={stats} />
     </div>
