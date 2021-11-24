@@ -16,15 +16,7 @@
   box-shadow: rgba(0, 0, 0, 0.5) 7px 7px 10px 0px;
 }
 
-.statusCard h1 {
-  font-size: 1.7rem;
-}
-
-.statusCard p {
-  font-size: 0.8rem;
-}
-
-@media (min-width: 800px) {
+@media (min-width: 1200px) {
   .statusCard {
     width: 250px;
     margin-right: 0.5rem;
