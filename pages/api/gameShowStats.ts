@@ -1,9 +1,8 @@
 import axios from 'axios';
-import { NextApiResponse } from 'next';
+import { NextApiRequest, NextApiResponse } from 'next';
 import nextConnect from 'next-connect';
 import { cors } from '../../middleware/cors';
 import { runMiddleware } from '../../middleware/runMiddleware';
-import { NextApiRequestWithDb } from '../../utils/NextRequestWithDbType';
 
 
 const handler = nextConnect();
@@ -32,7 +31,7 @@ const getStats = async () => {
 };
 
 
-handler.get(async (req: NextApiRequestWithDb, res: NextApiResponse<GameShowStatsResponse>) => {
+handler.get(async (req: NextApiRequest, res: NextApiResponse<GameShowStatsResponse>) => {
   await runMiddleware(req, res, cors)
   res.setHeader('Cache-Control', 's-maxage=180')
   return res.json(await getStats())

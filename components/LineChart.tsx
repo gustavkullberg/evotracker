@@ -3,6 +3,15 @@ import { XAxis, YAxis, Tooltip, AreaChart, Area, ResponsiveContainer, CartesianG
 import moment from 'moment';
 import '../styles/Home.module.css';
 import React from 'react';
+import { toolTipLabelFormatter } from './BarChart';
+
+export const formatUnixTimeToTickFormat = (unixTime, selectedFilter) => {
+    if (selectedFilter === '1D') return moment(unixTime).format('HH:mm');
+    else if (selectedFilter === '10D') return moment(unixTime).format(isMobile ? 'ddd' : 'ddd Do');
+    else if (selectedFilter === 'Daily Max') return moment(unixTime).format("MMM Do");
+    else if (selectedFilter === 'Daily Avg') return moment(unixTime).format("MMM Do");
+    else if (selectedFilter === 'Monthly Avg') return moment(unixTime).format("MMM YY");
+}
 
 export const LineChart = ({ timeSeries, selectedFilter, isFetchingTimeSeries }) => {
     return ((timeSeries.length > 0 && !isFetchingTimeSeries ? (
@@ -14,12 +23,7 @@ export const LineChart = ({ timeSeries, selectedFilter, isFetchingTimeSeries }) 
                     name="Time"
                     axisLine={false}
                     minTickGap={isMobile ? 16 : 100}
-                    tickFormatter={unixTime => {
-                        if (selectedFilter === '1D') return moment(unixTime).format('HH:mm');
-                        else if (selectedFilter === '10D') return moment(unixTime).format(isMobile ? 'ddd' : 'ddd Do');
-                        else if (selectedFilter === 'Daily Max') return moment(unixTime).format("MMM Do");
-                        else if (selectedFilter === 'Daily Avg') return moment(unixTime).format("MMM Do");
-                    }}
+                    tickFormatter={unixTime => formatUnixTimeToTickFormat(unixTime, selectedFilter)}
                     type="number"
                     scale="time"
                 />
@@ -40,7 +44,7 @@ export const LineChart = ({ timeSeries, selectedFilter, isFetchingTimeSeries }) 
                     </linearGradient>
                 </defs>
 
-                <Tooltip labelFormatter={(time: Date) => `${moment(time).format(selectedFilter.includes("Daily") ? 'Do MMM' : 'HH:mm, Do MMM')}`} />
+                <Tooltip labelFormatter={(time: Date) => `${moment(time).format(toolTipLabelFormatter(selectedFilter))}`} />
                 <Area type="monotone" dataKey="players" stroke="black" fill="url(#evoblack)" />
             </AreaChart>
         </ResponsiveContainer >

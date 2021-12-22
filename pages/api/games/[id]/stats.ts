@@ -1,9 +1,8 @@
 import axios from 'axios';
-import { NextApiResponse } from 'next';
+import { NextApiRequest, NextApiResponse } from 'next';
 import nextConnect from 'next-connect';
 import { cors } from '../../../../middleware/cors';
 import { runMiddleware } from '../../../../middleware/runMiddleware';
-import { NextApiRequestWithDb } from '../../../../utils/NextRequestWithDbType';
 
 
 const handler = nextConnect();
@@ -33,7 +32,7 @@ const getStats = async (game: string) => {
 };
 
 
-handler.get(async (req: NextApiRequestWithDb, res: NextApiResponse<any>) => {
+handler.get(async (req: NextApiRequest, res: NextApiResponse<any>) => {
     const id = req.query.id as string;
     await runMiddleware(req, res, cors)
 

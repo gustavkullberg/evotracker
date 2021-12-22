@@ -3,6 +3,7 @@ import { XAxis, YAxis, Tooltip, Legend, Bar, Line, ComposedChart, ResponsiveCont
 import moment from 'moment';
 import '../styles/Home.module.css';
 import React from 'react';
+import { formatUnixTimeToTickFormat } from './LineChart';
 const average = 30;
 
 const renderCustomizedLabel = (props, selectedGameShow) => {
@@ -18,6 +19,16 @@ const renderCustomizedLabel = (props, selectedGameShow) => {
     ) : undefined;
 };
 
+export const toolTipLabelFormatter = (selectedFilter: string) => {
+    if (selectedFilter.includes("Daily")) return 'ddd Do MMM';
+    if (selectedFilter.includes("Monthly")) return "MMMM YY";
+    return 'HH:mm,  Do MMM'
+}
+
+const showMA = (selectedFilter: string): boolean => {
+    return selectedFilter.includes("Daily")
+}
+
 export const Bars = ({ timeSeries, selectedFilter, isFetchingTimeSeries, selectedGameShow }): JSX.Element => {
     const [focusBar, setFocusBar] = React.useState(null);
 
@@ -30,9 +41,9 @@ export const Bars = ({ timeSeries, selectedFilter, isFetchingTimeSeries, selecte
         if (active) {
             return (
                 <div className="custom-tooltip" style={{ backgroundColor: "white", margin: "0px", padding: "10px", border: "1px solid rgb(204, 204, 204)" }}>
-                    <p className="label">{`${moment(label).format(selectedFilter.includes("Daily") ? 'ddd Do MMM' : 'HH:mm,  Do MMM')} `}</p>
+                    <p className="label">{`${moment(label).format(toolTipLabelFormatter(selectedFilter))} `}</p>
                     <p>{`Players: ${payload[0].value}`} </p>
-                    <p>{`MA${average}: ${payload[0].payload.avg}`} </p>
+                    {showMA(selectedFilter) && <p>{`MA${average}: ${payload[0].payload.avg}`} </p>}
                     {new Date(label).toISOString().split("T")[0] === "2020-12-14" ?
                         <p style={{ color: "red" }} className="desc">More games tracked</p>
                         : undefined}
@@ -58,12 +69,7 @@ export const Bars = ({ timeSeries, selectedFilter, isFetchingTimeSeries, selecte
                     name="Time"
                     minTickGap={isMobile ? 16 : 100}
                     padding={{ left: isMobile ? 0 : 20, right: isMobile ? 0 : 20 }}
-                    tickFormatter={unixTime => {
-                        if (selectedFilter === '1D') return moment(unixTime).format('HH:mm');
-                        else if (selectedFilter === '10D') return moment(unixTime).format(isMobile ? 'ddd' : 'ddd Do');
-                        else if (selectedFilter === 'Daily Max') return moment(unixTime).format("MMM Do");
-                        else if (selectedFilter === 'Daily Avg') return moment(unixTime).format("MMM Do");
-                    }}
+                    tickFormatter={unixTime => formatUnixTimeToTickFormat(unixTime, selectedFilter)}
                     type="number"
                     scale="time"
                 />
@@ -97,12 +103,12 @@ export const Bars = ({ timeSeries, selectedFilter, isFetchingTimeSeries, selecte
                     <LabelList dataKey="hasMajorDataChange" position="top" content={(c) => renderCustomizedLabel(c, selectedGameShow)} />
                 </Bar>
 
-                <Line type="monotone" dataKey="avg" stroke="red" strokeDasharray="4 3" dot={false} activeDot={false} />
+                {showMA(selectedFilter) && <Line type="monotone" dataKey="avg" stroke="red" strokeDasharray="4 3" dot={false} activeDot={false} />}
 
 
             </ComposedChart>
         </ResponsiveContainer >
     ) : <div style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: "100px" }}>
-            <p>Loading ..</p>
-        </div>))
+        <p>Loading ..</p>
+    </div>))
 }

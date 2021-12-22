@@ -6,7 +6,7 @@ import { Bars } from "../components/BarChart";
 import { GeneralStatusCard } from "../components/GeneralStatusCard/GeneralStatusCard";
 import { WeekChart } from "../components/WeekChart/WeekChart";
 
-const filters = ["1D", "10D", "Daily Avg", "Daily Max"];
+const filters = ["1D", "10D", "Daily Avg", "Daily Max", "Monthly Avg"];
 const defaultGame = "Crazy Time"
 
 export default function Home(): JSX.Element {
@@ -96,7 +96,7 @@ export default function Home(): JSX.Element {
         </div>
         <div >
           {
-            selectedFilter === TimeFilter.DAILY_AVG || selectedFilter === TimeFilter.DAILY_MAX ? <Bars timeSeries={timeSeries.map((j) => {
+            selectedFilter === TimeFilter.DAILY_AVG || selectedFilter === TimeFilter.DAILY_MAX || selectedFilter === TimeFilter.MONTHLY_AVG ? <Bars timeSeries={timeSeries.map((j) => {
               return {
                 timeStamp: new Date(j.timeStamp).getTime(),
                 players: Math.round(j.value[selectedGameShow]),

@@ -1,6 +1,5 @@
 import nextConnect from 'next-connect';
-import type { NextApiResponse } from 'next'
-import type { NextApiRequestWithDb } from "../../utils/NextRequestWithDbType"
+import type { NextApiRequest, NextApiResponse } from 'next'
 import TimeFilter from '../../utils/timeFIlter';
 import axios from "axios";
 import { getStartDateFromTimeFilter } from '../../utils/getStartDateFromTimeFilter';
@@ -14,7 +13,9 @@ type TimeSeriesEntry = {
 const handler = nextConnect();
 
 const getDailyTimeSeries = async (timeFilter: TimeFilter): Promise<any[]> => {
-  const { data } = await axios.get(`${process.env.DO_BASE_URL}timeseries/daily`);
+  const oneYearAgo = new Date();
+  oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+  const { data } = await axios.get(`${process.env.DO_BASE_URL}timeseries/daily?startDate=${oneYearAgo}`);
 
   if (timeFilter === TimeFilter.DAILY_AVG) {
     return data.map(m => ({
@@ -29,6 +30,11 @@ const getDailyTimeSeries = async (timeFilter: TimeFilter): Promise<any[]> => {
   }
 
   return data
+}
+
+export const getMonthlyTimeSeries = async () => {
+  const { data } = await axios.get(`${process.env.DO_BASE_URL}timeseries/monthly`);
+  return data.map(m => ({ timeStamp: m.date, value: m.averages }))
 }
 
 export const getTimeSeries = async (startDate: Date): Promise<TimeSeriesEntry[]> => {
@@ -48,7 +54,7 @@ const getAllTimeSeries = async (timeFilter) => {
   return timeFilteredResult;
 };
 
-handler.get(async (req: NextApiRequestWithDb, res: NextApiResponse<any[]>) => {
+handler.get(async (req: NextApiRequest, res: NextApiResponse<any[]>) => {
   const timeFilter: TimeFilter = req.query.timeFilter as TimeFilter
   await runMiddleware(req, res, cors)
 
@@ -56,6 +62,8 @@ handler.get(async (req: NextApiRequestWithDb, res: NextApiResponse<any[]>) => {
     res.setHeader('Cache-Control', 's-maxage=180')
     if (timeFilter === TimeFilter.DAILY_AVG || timeFilter === TimeFilter.DAILY_MAX) {
       return res.json(await getDailyTimeSeries(timeFilter))
+    } else if (timeFilter === TimeFilter.MONTHLY_AVG) {
+      return res.json(await getMonthlyTimeSeries())
     }
     return res.json(await getAllTimeSeries(timeFilter));
 
