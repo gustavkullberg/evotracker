@@ -64,7 +64,7 @@ export default function Home(): JSX.Element {
   };
 
   const extractGameShowList = () => {
-    const games = timeSeries && timeSeries.length > 0 && Object.keys(timeSeries[timeSeries.length - 1].value);
+    const games = timeSeries && timeSeries.length > 0 && Object.keys(timeSeries[timeSeries.length - 1].value).filter(g => g != "All Shows")
     return games;
   }
 
