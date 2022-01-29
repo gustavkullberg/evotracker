@@ -15,6 +15,7 @@ export default function Home(): JSX.Element {
   const [stats, setStats] = useState({ highestMonthlyRelative: [], topLive: [], aths: [] });
   const [selectedFilter, setFilter] = useState("1D");
   const [timeSeries, setTimeSeries] = useState([]);
+  const [events, setEvents] = useState([]);
   const [gameSelectionIsOpen, setGameSelectionIsOpen] = useState(false);
   const [filterSelectionIsOpen, setFilterSelectionIsOpen] = useState(false);
   const [isFetchingTimeSeries, setIsFetchingTimeSeries] = useState(false);
@@ -44,10 +45,19 @@ export default function Home(): JSX.Element {
       });
   };
 
+  const fetchEvents = () => {
+    fetch(`/api/events`)
+      .then((response) => response.json())
+      .then((data) => {
+        setEvents(data)
+      });
+  }
+
   useEffect(() => {
     fetchTimeSeries(selectedGameShow, selectedFilter);
     fetchGameStats(selectedGameShow);
     fetchStats();
+    fetchEvents();
   }, []);
 
   const setShowClick = (gameShowTitle) => {
@@ -119,7 +129,7 @@ export default function Home(): JSX.Element {
         </div>
         <WeekChart data={gameStats.dotWStats} game={gameStats.game} />
       </div>
-      <GeneralStatusCard setGameShow={setShowClick} stats={stats} />
+      <GeneralStatusCard setGameShow={setShowClick} stats={stats} athEvents={events} />
     </div>
   );
 }
