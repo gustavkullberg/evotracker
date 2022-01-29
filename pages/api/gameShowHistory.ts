@@ -20,12 +20,12 @@ const getDailyTimeSeries = async (game, timeFilter: TimeFilter): Promise<any[]> 
     return data.map(m => ({
       timeStamp: m.timeStamp,
       value: m.average
-    }))
+    })).filter(x => !!x.value)
   } else if (timeFilter === TimeFilter.DAILY_MAX) {
     return data.map(m => ({
       timeStamp: m.timeStamp,
       value: m.max
-    }))
+    })).filter(x => !!x.value)
   }
 
   return data
@@ -49,7 +49,7 @@ const getAllTimeSeries = async (game, timeFilter) => {
         timeStamp: ts.timeStamp,
         value: ts.value,
       };
-    })
+    }).filter(x => !!x.value)
   return timeFilteredResult;
 };
 
