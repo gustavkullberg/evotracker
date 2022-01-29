@@ -6,6 +6,7 @@ import { Bars } from "../components/BarChart";
 import { GeneralStatusCard } from "../components/GeneralStatusCard/GeneralStatusCard";
 import { WeekChart } from "../components/WeekChart/WeekChart";
 import { useRouter } from 'next/router'
+import { replaceAll } from "../utils/replaceAll";
 
 
 const filters = ["1D", "10D", "Daily Avg", "Daily Max", "Monthly Avg"];
@@ -21,8 +22,9 @@ export default function Home(): JSX.Element {
     const [filterSelectionIsOpen, setFilterSelectionIsOpen] = useState(false);
     const [isFetchingTimeSeries, setIsFetchingTimeSeries] = useState(false);
     const router = useRouter();
-    const game = router.query.game?.toString()?.replaceAll("_", " ")
-    const format = router.query.format?.toString().replaceAll("_", " ")
+
+    const game = replaceAll(router.query.game?.toString(), "_", " ");
+    const format = replaceAll(router.query.format?.toString(), "_", " ");
 
 
     const fetchTimeSeries = (gameShow, filter) => {
@@ -70,12 +72,13 @@ export default function Home(): JSX.Element {
     }, [router.query]);
 
     const setShowClick = (gameShowTitle) => {
-        router.push(gameShowTitle.replaceAll(" ", "_"));
+        router.query.game = replaceAll(gameShowTitle, " ", "_")
+        router.push(router);
         setGameSelectionIsOpen(false);
     };
 
     const setFilterClick = (f: TimeFilter) => {
-        router.query.format = f.replaceAll(" ", "_");
+        router.query.format = replaceAll(f, " ", "_");
         router.push(router);
         setFilterSelectionIsOpen(false);
     };
