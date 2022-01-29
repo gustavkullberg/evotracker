@@ -21,7 +21,7 @@ export default function Home(): JSX.Element {
 
   const fetchTimeSeries = (gameShow, filter) => {
     setIsFetchingTimeSeries(true);
-    fetch(`api/gameShowHistory?gameShow=ALL_SHOWS&timeFilter=${filter}`)
+    fetch(`api/gameShowHistory?gameShow=${gameShow}&timeFilter=${filter}`)
       .then((response) => response.json())
       .then((data) => {
         setTimeSeries(data)
@@ -54,18 +54,17 @@ export default function Home(): JSX.Element {
     setGameShow(gameShowTitle);
     setGameSelectionIsOpen(false);
     fetchGameStats(gameShowTitle);
+    fetchTimeSeries(gameShowTitle, selectedFilter);
   };
 
   const setFilterClick = (f: TimeFilter) => {
-
     setFilter(f);
     setFilterSelectionIsOpen(false);
     fetchTimeSeries(selectedGameShow, f);
   };
 
   const extractGameShowList = () => {
-    const games = timeSeries && timeSeries.length > 0 && Object.keys(timeSeries[timeSeries.length - 1].value).filter(g => g != "All Shows")
-    return games;
+    return stats.topLive?.map(s => s.game) || [defaultGame];
   }
 
   return (
@@ -99,7 +98,7 @@ export default function Home(): JSX.Element {
             selectedFilter === TimeFilter.DAILY_AVG || selectedFilter === TimeFilter.DAILY_MAX || selectedFilter === TimeFilter.MONTHLY_AVG ? <Bars timeSeries={timeSeries.map((j) => {
               return {
                 timeStamp: new Date(j.timeStamp).getTime(),
-                players: Math.round(j.value[selectedGameShow]),
+                players: j.value ? Math.round(j.value[selectedGameShow]) : 0,
               }
             }).filter(f => f.players)}
               selectedFilter={selectedFilter}
@@ -110,7 +109,7 @@ export default function Home(): JSX.Element {
                 return {
                   timeStamp: new Date(j.timeStamp).getTime(),
                   players: selectedGameShow === "All Shows" ?
-                    Object.values(j.value).reduce((res2: number, obj2: number) => res2 + obj2, 0) : j.value[selectedGameShow],
+                    Object.values(j.value).reduce((res2: number, obj2: number) => res2 + obj2, 0) : j.value,
                 }
               }).filter(f => f.players)}
                 selectedFilter={selectedFilter}

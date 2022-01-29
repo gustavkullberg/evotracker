@@ -3,14 +3,9 @@ import { twitterURL, dataSourceURL, gitHubURL } from "../../config";
 
 export const Footer = () => (
   <footer className={styles.footer}>
-    <a
-      className={styles.link}
-      href={dataSourceURL}
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      <p style={{ fontSize: "0.85rem" }}>Data source: William Hill</p>
-    </a>
+
+    <p style={{ fontSize: "0.85rem" }}>Data source: Bets10, William Hill</p>
+
 
     <a
       className={styles.link}

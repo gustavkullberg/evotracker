@@ -6,9 +6,9 @@ import { getStartDateFromTimeFilter } from '../../utils/getStartDateFromTimeFilt
 import { runMiddleware } from '../../middleware/runMiddleware';
 import { cors } from '../../middleware/cors';
 
-type TimeSeriesEntry = {
+type DataPoint = {
   timeStamp: Date
-  entry: Record<string, number>
+  value: number
 }
 const handler = nextConnect();
 
@@ -37,18 +37,18 @@ export const getMonthlyTimeSeries = async () => {
   return data.map(m => ({ timeStamp: m.date, value: m.averages }))
 }
 
-export const getTimeSeries = async (startDate: Date): Promise<TimeSeriesEntry[]> => {
-  const { data } = await axios.get(`${process.env.DO_BASE_URL}timeseries/minutes?startDate=${startDate}`);
+export const getTimeSeries = async (game: string, startDate: Date): Promise<DataPoint[]> => {
+  const { data } = await axios.get(`${process.env.DO_BASE_URL}games/${game}/timeseries/minutes?startDate=${startDate}`);
   return data;
 };
 
-const getAllTimeSeries = async (timeFilter) => {
+const getAllTimeSeries = async (game, timeFilter) => {
   const startDate = getStartDateFromTimeFilter(timeFilter);
-  const timeFilteredResult = (await getTimeSeries(startDate))
+  const timeFilteredResult = (await getTimeSeries(game, startDate))
     .map(ts => {
       return {
         timeStamp: ts.timeStamp,
-        value: ts.entry,
+        value: ts.value,
       };
     })
   return timeFilteredResult;
@@ -65,7 +65,7 @@ handler.get(async (req: NextApiRequest, res: NextApiResponse<any[]>) => {
     } else if (timeFilter === TimeFilter.MONTHLY_AVG) {
       return res.json(await getMonthlyTimeSeries())
     }
-    return res.json(await getAllTimeSeries(timeFilter));
+    return res.json(await getAllTimeSeries(req.query.gameShow, timeFilter));
 
   } else {
     res.statusCode = 400;
