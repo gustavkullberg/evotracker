@@ -12,29 +12,28 @@ type DataPoint = {
 }
 const handler = nextConnect();
 
-const getDailyTimeSeries = async (timeFilter: TimeFilter): Promise<any[]> => {
+const getDailyTimeSeries = async (game, timeFilter: TimeFilter): Promise<any[]> => {
   const oneYearAgo = new Date();
   oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-  const { data } = await axios.get(`${process.env.DO_BASE_URL}timeseries/daily?startDate=${oneYearAgo}`);
-
+  const { data } = await axios.get(`${process.env.DO_BASE_URL}games/${game}/timeseries/daily?startDate=${oneYearAgo}`);
   if (timeFilter === TimeFilter.DAILY_AVG) {
     return data.map(m => ({
-      timeStamp: m.date,
-      value: m.dailyAverages
+      timeStamp: m.timeStamp,
+      value: m.average
     }))
   } else if (timeFilter === TimeFilter.DAILY_MAX) {
     return data.map(m => ({
-      timeStamp: m.date,
-      value: m.dailyMaxes
+      timeStamp: m.timeStamp,
+      value: m.max
     }))
   }
 
   return data
 }
 
-export const getMonthlyTimeSeries = async () => {
-  const { data } = await axios.get(`${process.env.DO_BASE_URL}timeseries/monthly`);
-  return data.map(m => ({ timeStamp: m.date, value: m.averages }))
+export const getMonthlyTimeSeries = async (game) => {
+  const { data } = await axios.get(`${process.env.DO_BASE_URL}games/${game}/timeseries/monthly`);
+  return data;
 }
 
 export const getTimeSeries = async (game: string, startDate: Date): Promise<DataPoint[]> => {
@@ -61,9 +60,9 @@ handler.get(async (req: NextApiRequest, res: NextApiResponse<any[]>) => {
   if (req.query.gameShow) {
     res.setHeader('Cache-Control', 's-maxage=180')
     if (timeFilter === TimeFilter.DAILY_AVG || timeFilter === TimeFilter.DAILY_MAX) {
-      return res.json(await getDailyTimeSeries(timeFilter))
+      return res.json(await getDailyTimeSeries(req.query.gameShow, timeFilter))
     } else if (timeFilter === TimeFilter.MONTHLY_AVG) {
-      return res.json(await getMonthlyTimeSeries())
+      return res.json(await getMonthlyTimeSeries(req.query.gameShow))
     }
     return res.json(await getAllTimeSeries(req.query.gameShow, timeFilter));
 

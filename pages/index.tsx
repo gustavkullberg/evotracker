@@ -108,7 +108,7 @@ export default function Home(): JSX.Element {
             selectedFilter === TimeFilter.DAILY_AVG || selectedFilter === TimeFilter.DAILY_MAX || selectedFilter === TimeFilter.MONTHLY_AVG ? <Bars timeSeries={timeSeries.map((j) => {
               return {
                 timeStamp: new Date(j.timeStamp).getTime(),
-                players: j.value ? Math.round(j.value[selectedGameShow]) : 0,
+                players: j.value ? Math.round(j.value) : 0,
               }
             }).filter(f => f.players)}
               selectedFilter={selectedFilter}

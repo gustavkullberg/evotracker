@@ -29,7 +29,7 @@ export const GameList = ({ gameList, setGameShow, maxNbr, title, isPercentageVal
     }
 
     const getPrefix = (timeStamp, rank, value, game) => {
-        return isAthEventList ? `${formatDate(timeStamp)}. ${formatGameName(game)} | ` : `${rank}. ${formatGameName(game)}`;
+        return isAthEventList ? `${formatDate(timeStamp)}. ${formatGameName(game)} | ` : `${rank}. ${formatGameName(game)} | `;
     }
 
     return <div className={styles.statusProp}>
