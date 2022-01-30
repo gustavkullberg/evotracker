@@ -135,7 +135,7 @@ export default function Home(): JSX.Element {
                             />
                     }
                 </div>
-                <WeekChart data={gameStats.dotWStats} game={gameStats.game} />
+                {selectedGameShow !== "All Shows" && <WeekChart data={gameStats.dotWStats} game={gameStats.game} />}
             </div>
             <GeneralStatusCard setGameShow={setShowClick} stats={stats} athEvents={events} />
         </div>
