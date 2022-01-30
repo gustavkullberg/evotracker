@@ -22,8 +22,11 @@ export const StatusCard = ({ selectedGameShow, gameStats }) => {
                     <div className={styles.statusProp}>
                         <div style={{ display: "flex", alignItems: "center", position: "relative" }}>
                             <h1>{gameStats.game} </h1>
-                            <span ref={toolTipRef} className={mStyles.infoIcon}><ion-icon onClick={() => setDisplayInfoBox(!displayInfoBox)} name={"information-circle-outline"} size="large"> </ion-icon>
-                            </span>{displayInfoBox && <InfoBox />}
+                            {
+                                gameStats.game === "All Shows" && <span ref={toolTipRef} className={mStyles.infoIcon}><ion-icon onClick={() => setDisplayInfoBox(!displayInfoBox)} name={"information-circle-outline"} size="large"> </ion-icon>
+                                </span>
+                            }
+                            {displayInfoBox && <InfoBox />}
                         </div>
                         <div className={mStyles.gameStatusRow}  >
                             <div className={mStyles.gameStatusRowElement} >
