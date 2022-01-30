@@ -20,7 +20,7 @@ const renderCustomizedLabel = (props, selectedGameShow) => {
 };
 
 export const toolTipLabelFormatter = (selectedFilter: string) => {
-    if (selectedFilter.includes("Daily")) return 'ddd Do MMM';
+    if (selectedFilter.includes("Daily")) return 'MMM Do YY';
     if (selectedFilter.includes("Monthly")) return "MMMM YY";
     return 'HH:mm,  Do MMM'
 }

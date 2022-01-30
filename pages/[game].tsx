@@ -114,7 +114,7 @@ export default function Home(): JSX.Element {
                 </div>
                 <div >
                     {
-                        selectedFilter === TimeFilter.DAILY_AVG || selectedFilter === TimeFilter.DAILY_MAX || selectedFilter === TimeFilter.MONTHLY_AVG ? <Bars timeSeries={timeSeries.map((j) => {
+                        selectedFilter === TimeFilter.MONTHLY_AVG ? <Bars timeSeries={timeSeries.map((j) => {
                             return {
                                 timeStamp: new Date(j.timeStamp).getTime(),
                                 players: j.value ? Math.round(j.value) : 0,
@@ -128,7 +128,7 @@ export default function Home(): JSX.Element {
                                 return {
                                     timeStamp: new Date(j.timeStamp).getTime(),
                                     players: selectedGameShow === "All Shows" ?
-                                        Object.values(j.value).reduce((res2: number, obj2: number) => res2 + obj2, 0) : j.value,
+                                        Object.values(j.value).reduce((res2: number, obj2: number) => res2 + obj2, 0) : Math.round(j.value),
                                 }
                             }).filter(f => f.players)}
                                 selectedFilter={selectedFilter}

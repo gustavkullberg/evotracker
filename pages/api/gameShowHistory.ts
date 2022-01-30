@@ -15,7 +15,7 @@ const handler = nextConnect();
 const getDailyTimeSeries = async (game, timeFilter: TimeFilter): Promise<any[]> => {
   const oneYearAgo = new Date();
   oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-  const { data } = await axios.get(`${process.env.DO_BASE_URL}games/${game}/timeseries/daily?startDate=${oneYearAgo}`);
+  const { data } = await axios.get(`${process.env.DO_BASE_URL}games/${game}/timeseries/daily`);
   if (timeFilter === TimeFilter.DAILY_AVG) {
     return data.map(m => ({
       timeStamp: m.timeStamp,
