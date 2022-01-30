@@ -127,8 +127,7 @@ export default function Home(): JSX.Element {
                             <LineChart timeSeries={timeSeries.map((j) => {
                                 return {
                                     timeStamp: new Date(j.timeStamp).getTime(),
-                                    players: selectedGameShow === "All Shows" ?
-                                        Object.values(j.value).reduce((res2: number, obj2: number) => res2 + obj2, 0) : Math.round(j.value),
+                                    players: Math.round(j.value),
                                 }
                             }).filter(f => f.players)}
                                 selectedFilter={selectedFilter}

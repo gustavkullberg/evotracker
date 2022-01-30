@@ -1,0 +1,16 @@
+.container {
+  color: black;
+  background-color: #ffa64d;
+  width: 90%;
+  padding: 10px 30px;
+  margin-bottom: 20px;
+  justify-content: center;
+  align-items: center;
+
+  display: flex;
+  position: absolute;
+
+  z-index: 1;
+  left: 90px;
+  bottom: 40px;
+}

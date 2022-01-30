@@ -19,8 +19,7 @@ const handler = nextConnect();
 const getAthEvents = async (): Promise<AthEvent[]> => {
     const { data } = await axios.get(`${process.env.DO_BASE_URL}events/allTimeHighs`);
 
-    return data.map(d => ({ game: d.game, value: d.players, timeStamp: d.timeStamp, type: "All time High" })).filter(d => d.game !== "All Shows");
-
+    return data.map(d => ({ game: d.game, value: d.players, timeStamp: d.timeStamp, type: "All time High" }));
 }
 
 

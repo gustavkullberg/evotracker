@@ -27,6 +27,13 @@
   margin-left: 10px;
 }
 
+.infoIcon {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding-left: 3px;
+}
+
 @media (max-width: 1200px) {
   .gameStatusRow {
     margin-bottom: 20px;
