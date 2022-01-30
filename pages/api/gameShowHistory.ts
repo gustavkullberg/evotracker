@@ -15,7 +15,7 @@ const handler = nextConnect();
 const getDailyTimeSeries = async (game, timeFilter: TimeFilter): Promise<any[]> => {
   const oneYearAgo = new Date();
   oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-  const { data } = await axios.get(`${process.env.DO_BASE_URL}games/${game}/timeseries/daily`);
+  const { data } = await axios.get(`${process.env.DO_BASE_URL}games/${encodeURIComponent(game)}/timeseries/daily`);
   if (timeFilter === TimeFilter.DAILY_AVG) {
     return data.map(m => ({
       timeStamp: m.timeStamp,
@@ -32,12 +32,12 @@ const getDailyTimeSeries = async (game, timeFilter: TimeFilter): Promise<any[]> 
 }
 
 export const getMonthlyTimeSeries = async (game) => {
-  const { data } = await axios.get(`${process.env.DO_BASE_URL}games/${game}/timeseries/monthly`);
+  const { data } = await axios.get(`${process.env.DO_BASE_URL}games/${encodeURIComponent(game)}/timeseries/monthly`);
   return data;
 }
 
 export const getTimeSeries = async (game: string, startDate: Date): Promise<DataPoint[]> => {
-  const { data } = await axios.get(`${process.env.DO_BASE_URL}games/${game}/timeseries/minutes?startDate=${startDate}`);
+  const { data } = await axios.get(`${process.env.DO_BASE_URL}games/${encodeURIComponent(game)}/timeseries/minutes?startDate=${startDate}`);
   return data;
 };
 
