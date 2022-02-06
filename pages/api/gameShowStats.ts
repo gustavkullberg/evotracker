@@ -33,7 +33,7 @@ const getStats = async () => {
 
 handler.get(async (req: NextApiRequest, res: NextApiResponse<GameShowStatsResponse>) => {
   await runMiddleware(req, res, cors)
-  res.setHeader('Cache-Control', 's-maxage=180')
+  res.setHeader('Cache-Control', 's-maxage=60')
   return res.json(await getStats())
 });
 

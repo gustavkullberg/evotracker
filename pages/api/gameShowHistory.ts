@@ -58,7 +58,7 @@ handler.get(async (req: NextApiRequest, res: NextApiResponse<any[]>) => {
   await runMiddleware(req, res, cors)
 
   if (req.query.gameShow) {
-    res.setHeader('Cache-Control', 's-maxage=180')
+    res.setHeader('Cache-Control', 's-maxage=60')
     if (timeFilter === TimeFilter.DAILY_AVG || timeFilter === TimeFilter.DAILY_MAX) {
       return res.json(await getDailyTimeSeries(req.query.gameShow, timeFilter))
     } else if (timeFilter === TimeFilter.MONTHLY_AVG) {

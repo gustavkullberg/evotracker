@@ -37,7 +37,7 @@ handler.get(async (req: NextApiRequest, res: NextApiResponse<any>) => {
     await runMiddleware(req, res, cors)
 
     if (id) {
-        res.setHeader('Cache-Control', 's-maxage=180')
+        res.setHeader('Cache-Control', 's-maxage=60')
         return res.json(await getStats(id))
     } else {
         res.statusCode = 400;
