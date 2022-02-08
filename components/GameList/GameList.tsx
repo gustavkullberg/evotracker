@@ -25,7 +25,7 @@ export const GameList = ({ gameList, setGameShow, maxNbr, title, isPercentageVal
     }
 
     const formatGameName = (game: string) => {
-        return game.length > 20 ? game.slice(0, 16) + ".." : game
+        return game.length > 15 ? game.slice(0, 15) + ".." : game
     }
 
     const getPrefix = (timeStamp, rank, value, game) => {
